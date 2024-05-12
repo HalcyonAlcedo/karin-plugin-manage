@@ -1,0 +1,11 @@
+{
+  "name": "karin-plugin-template",
+  "version": "0.0.1",
+  "author": "Lain",
+  "type": "module",
+  "dependencies": {
+  },
+  "imports": {
+    "#Karin": "./lib/index.js"
+  }
+}
