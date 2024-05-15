@@ -1,0 +1,13 @@
+# 面板api服务配置
+
+# 服务端口
+port: 3000
+
+# 调试模式
+debug: false
+
+# 开发模型
+dev: false
+
+# token的secretKey，请不要手动修改
+secretKey:

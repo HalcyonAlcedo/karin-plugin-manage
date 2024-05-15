@@ -1,9 +1,13 @@
 {
-  "name": "karin-plugin-template",
+  "name": "karin-plugin-manage",
   "version": "0.0.1",
-  "author": "Lain",
+  "author": "Alcedo",
   "type": "module",
   "dependencies": {
+    "@fastify/static": "^7.0.4",
+    "bcryptjs": "^2.4.3",
+    "fastify": "^4.27.0",
+    "jsonwebtoken": "^9.0.2"
   },
   "imports": {
     "#Karin": "./lib/index.js"

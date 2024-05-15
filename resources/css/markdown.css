@@ -1,0 +1,45 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.markdown-body {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+}
+
+ul li::before {
+  content: '•';
+  color: #1E90FF;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+pre {
+  background-color: #f6f8fa;
+  padding: 16px;
+  border-radius: 3px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+thead {
+  background-color: #f2f2f2;
+}
