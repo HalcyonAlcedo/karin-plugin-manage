@@ -1,29 +1,29 @@
-[Karin](https://github.com/karinjs/karin) 插件包模板仓库
 
+# Karin Manage 插件
 ---
 
-- fork 本仓库
-- 拉取fork后的仓库到本地
-- 修改 `package.json` 文件中的 `name` 和 `description` 字段
-- 将 `README.md` 文件中的内容替换为自己的插件说明。
+## 安装插件
 
-## 克隆仓库
-
-karin根目录执行以下命令克隆仓库到本地
+karin根目录执行以下命令安装Karin Manage插件
 
 ```bash
-git clone https://github.com/karinjs/karin-plugin-template.git ./plugins/karin-plugin-template
+git clone https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
 ```
 
-## 安装依赖
+开放服务器5333端口
 
-```bash
-pnpm install --filter=karin-plugin-template
-```
+## 配置
 
+### server
 
-## 开发调试
+待完善
 
-```bash
-node . --dev
-```
+## 用法
+对机器人发送 #添加面板管理账号 或 #添加面板管理账号 password，如果不设置密码将自动生成密码，账号为发送者qq号
+
+登陆[公共管理面板](http://karin.alcedo.top)
+输入服务器api地址，比如你部署在111.111.111.111的服务器上，就填http://111.111.111.111:5333
+登陆管理账号后开始使用
+
+## 相关链接
+[Karin](https://github.com/KarinJS/Karin)
