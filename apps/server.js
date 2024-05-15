@@ -3,10 +3,11 @@ import crypto from 'crypto'
 import { UserManager } from '../lib/user/index.js'
 import server from '../lib/server/index.js'
 
+// 启动面板api
+server()
+
 export class Server extends plugin {
   constructor () {
-    // 启动面板api
-    server()
 
     super({
       // 必选 插件名称
@@ -59,7 +60,7 @@ export class Server extends plugin {
       }
     } else {
       if (!password) {
-        password = crypto.randomBytes(32).replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+        password = crypto.randomBytes(32).toString().replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
       }
       UserManager.addUser(this.e.user_id, password, ['^/user/.*$/', '^/config/.*$'])
       this.reply(`已创建账号\n用户名：${this.e.user_id}\n密码：${password}`)
