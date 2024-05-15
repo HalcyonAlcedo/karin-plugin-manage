@@ -10,6 +10,12 @@ karin根目录执行以下命令安装Karin Manage插件
 git clone https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
 ```
 
+安装依赖
+
+```bash
+pnpm install --filter=karin-plugin-manage
+```
+
 开放服务器5333端口
 
 ## 配置
