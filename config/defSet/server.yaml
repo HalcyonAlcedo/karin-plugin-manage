@@ -6,8 +6,5 @@ port: 5333
 # 调试模式
 debug: false
 
-# 开发模型
-dev: false
-
 # token的secretKey，请不要手动修改
 secretKey:
