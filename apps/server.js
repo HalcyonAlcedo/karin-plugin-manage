@@ -24,7 +24,7 @@ export class Server extends plugin {
       rule: [
         {
           /** 命令正则匹配 */
-          reg: '^#添加面板管理账号',
+          reg: '^#(添加|创建)面板管理账号',
           /** 执行方法 */
           fnc: 'addAdminUser',
           //  是否显示操作日志 true=是 false=否
@@ -34,7 +34,7 @@ export class Server extends plugin {
         },
         {
           /** 命令正则匹配 */
-          reg: '^#重置面板管理密码',
+          reg: '^#(重置|修改)面板管理密码',
           /** 执行方法 */
           fnc: 'changePassword',
           //  是否显示操作日志 true=是 false=否
@@ -63,7 +63,7 @@ export class Server extends plugin {
     }
 
     let msg = this.e.msg
-    let password = msg.replace(/^#添加面板管理账号/, '').replace(/[\s\r\n]+/g, '')
+    let password = msg.replace(/^#(添加|创建)面板管理账号/, '').replace(/[\s\r\n]+/g, '')
 
     if (UserManager.checkUser(this.e.user_id)) {
       if (password) {
@@ -86,7 +86,7 @@ export class Server extends plugin {
     }
 
     let msg = this.e.msg
-    let password = msg.replace(/^#重置面板管理密码/, '').replace(/[\s\r\n]+/g, '')
+    let password = msg.replace(/^#(重置|修改)面板管理密码/, '').replace(/[\s\r\n]+/g, '')
 
     if (UserManager.checkUser(this.e.user_id)) {
       if (password) {
