@@ -13,7 +13,7 @@ wormhole:
   # 代理服务器,例：ws://localhost:3000/ws/
   server:
   # 客户端id,数字+字母，确保唯一性
-  clientId:
+  clientId: 
 
 # token的secretKey，请不要手动修改
 secretKey:
