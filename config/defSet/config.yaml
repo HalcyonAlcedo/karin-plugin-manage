@@ -1,5 +1,4 @@
-# 自动生成管理账号
-autoAdminAccount: false
+# 面板相关信息配置
 
 # 面板域名
 panelDomain:
