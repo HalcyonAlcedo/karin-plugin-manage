@@ -1,7 +1,9 @@
-import { plugin } from '#Karin'
+import { plugin, segment  } from '#Karin'
 import crypto from 'crypto'
+import axios from 'axios'
 import { UserManager } from '../lib/user/index.js'
 import server from '../lib/server/index.js'
+import Cfg from '../lib/config.js'
 
 // 启动面板api
 server()
@@ -39,6 +41,16 @@ export class Server extends plugin {
           log: true,
           // 权限 master,owner,admin,all
           permission: 'master'
+        },
+        {
+          /** 命令正则匹配 */
+          reg: '^#(访问|登陆)(管理|系统)?面板',
+          /** 执行方法 */
+          fnc: 'getPanelAddress',
+          //  是否显示操作日志 true=是 false=否
+          log: true,
+          // 权限 master,owner,admin,all
+          permission: 'master'
         }
       ]
     })
@@ -46,7 +58,8 @@ export class Server extends plugin {
 
   async addAdminUser () {
     if (!this.e.isPrivate) {
-      this.reply('只允许私聊发送')
+      this.reply('请私聊发送')
+      return
     }
 
     let msg = this.e.msg
@@ -68,7 +81,8 @@ export class Server extends plugin {
   }
   async changePassword () {
     if (!this.e.isPrivate) {
-      this.reply('只允许私聊发送')
+      this.reply('请私聊发送')
+      return
     }
 
     let msg = this.e.msg
@@ -83,5 +97,32 @@ export class Server extends plugin {
     } else {
       this.reply('账号不存在，如需创建账号请回复[#添加面板管理账号 密码]')
     }
+  }
+  async getPanelAddress () {
+    if (!this.e.isPrivate) {
+      this.reply('请私聊发送')
+      return
+    }
+    const getPublicIp = async () => {
+      const ipApi = Cfg.Config.ipApi
+      const response = await axios.get(ipApi || 'http://api.ipify.org');
+      return response.data;
+    }
+    let msg = []
+    msg.push(segment.text(`Karin 管理面板\n\n`))
+    msg.push(segment.text(`你可以登陆官方公共面板 http://karin.alcedo.top/ 输入服务器地址后访问 Karin 管理面板\n\n`))
+    if (Cfg.Server.wormhole?.enable || Cfg.Server.wormhole?.server || Cfg.Server.wormhole?.clientId) {
+      const wormholeUrl = new URL(Cfg.Server.wormhole?.server);
+      if (wormholeUrl) {
+        msg.push(segment.text(`代理服务器地址：http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${Cfg.Server.wormhole?.clientId}/\n`))
+      }
+    }
+    if (Cfg.Config.panelDomain) {
+      msg.push(segment.text(`公网服务器地址：http://${Cfg.Config.panelDomain}:${Cfg.Server.port || 80}\n`))
+    } else {
+      const publicIp = await getPublicIp()
+      msg.push(segment.text(`公网服务器地址：http://${publicIp}:${Cfg.Server.port || 80}\n`))
+    }
+    this.reply(msg)
   }
 }

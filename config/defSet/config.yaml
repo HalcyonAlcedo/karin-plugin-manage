@@ -1,3 +1,8 @@
-#自动生成管理账号
+# 自动生成管理账号
 autoAdminAccount: false
 
+# 面板域名
+panelDomain:
+
+# 获取ip的Api
+ipApi: http://api.ipify.org
