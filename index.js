@@ -1,5 +1,5 @@
 import path from 'path'
-import { logger, common, Cfg, plugin  } from '#Karin'
+import { logger, common } from '#Karin'
 import packageConfig from './package.json' assert { type: 'json' }
 
 /** 当前文件的绝对路径 */
@@ -13,6 +13,6 @@ const version = packageConfig.version
 /** 插件包相对路径 */
 const dirPath = './plugins/' + basename
 
-export { dirPath }
+export { dirPath, dirname }
 
 logger.info(`${basename}插件 ${version} 初始化~`)
