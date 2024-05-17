@@ -75,7 +75,7 @@ export class Server extends plugin {
       if (!password) {
         password = crypto.randomBytes(32).toString().replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
       }
-      UserManager.addUser(this.e.user_id, password, ['^/user/.*$/', '^/config/.*$'])
+      UserManager.addUser(this.e.user_id, password, ['^/user/.*$', '^/config/.*$', '^/system/.*$'])
       this.reply(`已创建账号\n用户名：${this.e.user_id}\n密码：${password}`)
     }
   }
