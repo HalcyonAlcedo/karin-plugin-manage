@@ -1,0 +1,59 @@
+-
+  # 配置文件描述
+  name: 面板相关信息配置
+  # 配置文件名
+  file: config.yaml
+  # 视图信息
+  view:
+    -
+      # 配置项
+      key: 面板域名
+      # 配置描述
+      comment: 面板域名
+      # 配置路径
+      path: 'panelDomain'
+      # 配置类型
+      type: 'text'
+    -
+      key: IP获取API
+      comment: 获取ip的Api地址
+      path: 'ipApi'
+      type: 'url'
+-
+  name: 面板api服务配置
+  file: server.yaml
+  view:
+    -
+      key: 服务端口
+      comment: 服务端口
+      path: 'port'
+      type: 'number'
+    -
+      key: 调试模式
+      comment: 调试模式
+      path: 'debug'
+      type: 'boolean'
+    -
+      key: wormhole代理
+      comment: 启动wormhole代理
+      path: 'wormhole.enable'
+      type: 'boolean'
+    -
+      key: wormhole配置
+      comment: wormhole代理设置
+      path: 'wormhole'
+      # 配置类型 group类型可包含子项
+      type: 'group'
+      # 子项
+      part:
+        -
+          key: 服务器地址
+          comment: 代理服务器链接地址，例：ws://localhost:3000/ws/
+          path: 'wormhole.server'
+          type: 'url'
+        -
+          key: 客户端ID
+          comment: 客户端id
+          path: 'wormhole.clientId'
+          type: 'text'
+
