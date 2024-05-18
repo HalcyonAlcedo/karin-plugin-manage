@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-manage",
-  "version": "0.0.1",
+  "version": "1.0.3",
   "author": "Alcedo",
   "type": "module",
   "dependencies": {
