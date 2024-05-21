@@ -1,8 +1,0 @@
-# 用户配置文件
-# 此配置文件不应当手动维护
-
-- username:
-  password:
-  routes:
-    - /
-  status: disabled

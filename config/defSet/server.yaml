@@ -14,6 +14,3 @@ wormhole:
   server:
   # 客户端id,数字+字母，确保唯一性
   clientId: 
-
-# token的secretKey，请不要手动修改
-secretKey:
