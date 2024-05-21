@@ -1,6 +1,6 @@
 -
   # 配置文件描述
-  name: 面板相关信息配置
+  name: 通用配置
   # 配置文件名
   file: config.yaml
   # 视图信息
@@ -19,6 +19,11 @@
       comment: 获取ip的Api地址
       path: 'ipApi'
       type: 'url'
+    -
+      key: 群获取日志
+      comment: 是否允许在群中获取日志
+      path: 'logInGroup'
+      type: 'boolean'
 -
   name: 面板api服务配置
   file: server.yaml

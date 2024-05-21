@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日志</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: rgba(1, 1, 1, 0);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin: auto;
+      padding: 20px;
+      background-color: rgba(233, 255, 248, 0.699);
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background-color: #c16ef16e;
+      border-radius: 50%;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      transform: scale(2) rotate(45deg);
+      z-index: 0;
+    }
+
+    .log-entry {
+      position: relative;
+      z-index: 1;
+      background-color: rgba(0, 0, 0, 0.1);
+      border: 1px solid #ddd;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .timestamp {
+      color: #888;
+    }
+
+    .level-info {
+      color: #5cb85c;
+    }
+
+    .level-mark {
+      color: #f0ad4e;
+    }
+
+    .message {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>系统日志</h1>
+    {{if Log.length > 0}}
+    {{each Log}}
+    <div class="log-entry">
+      <span class="timestamp">{{$value.timestamp}}</span>
+      <span class="level-{{$value.level.toLowerCase()}}">[{{$value.level}}]</span>
+      <div class="message">{{$value.message}}</div>
+    </div>
+    {{/each}}
+    {{else}}
+    <div class="message">未检索到日志信息</div>
+    {{/if}}
+  </div>
+</body>
+
+</html>
