@@ -46,7 +46,7 @@ export class System extends plugin {
     } else if (containsAny(msg, ['警告', 'WARN'])){
       level = 'WARN'
     } else if (containsAny(msg, ['错误', '异常', 'ERROR'])){
-      level = 'ERROR'
+      level = 'ERRO'
     } else if (containsAny(msg, ['标记', 'mark'])){
       level = 'MARK'
     } else if (containsAny(msg, ['追踪', 'trace'])){
