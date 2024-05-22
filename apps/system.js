@@ -38,8 +38,7 @@ export class System extends plugin {
     }
 
     const msg = this.e.msg
-    const number = msg.match(/\d+(\.\d+)?/) || [20]
-
+    const number = msg.match(/\d+/) || [20]
     let level = ''
     if (containsAny(msg, ['信息', 'INFO'])) {
       level = 'INFO'
