@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-manage",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Alcedo",
   "type": "module",
   "dependencies": {
@@ -11,6 +11,7 @@
     "jsonwebtoken": "^9.0.2"
   },
   "imports": {
-    "#Karin": "./lib/index.js"
+    "#Karin": "./lib/imports/index.js",
+    "#Plugin": "./lib/imports/Plugin.js"
   }
 }

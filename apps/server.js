@@ -1,9 +1,9 @@
 import { plugin, segment  } from '#Karin'
+import { Config } from '#Plugin'
 import crypto from 'crypto'
 import axios from 'axios'
 import { UserManager } from '../lib/user/index.js'
 import server from '../lib/server/index.js'
-import Cfg from '../lib/config.js'
 
 // 启动面板api
 server()
@@ -99,29 +99,30 @@ export class Server extends plugin {
     }
   }
   async getPanelAddress () {
+    console.log('test')
     if (!this.e.isPrivate) {
       this.reply('请私聊发送')
       return
     }
     const getPublicIp = async () => {
-      const ipApi = Cfg.Config.ipApi
+      const ipApi = Config.Config.ipApi
       const response = await axios.get(ipApi || 'http://api.ipify.org');
       return response.data;
     }
     let msg = []
     msg.push(segment.text(`Karin 管理面板\n\n`))
     msg.push(segment.text(`你可以登陆官方公共面板 http://karin.alcedo.top/ 输入服务器地址后访问 Karin 管理面板\n\n`))
-    if (Cfg.Server.wormhole?.enable || Cfg.Server.wormhole?.server || Cfg.Server.wormhole?.clientId) {
-      const wormholeUrl = new URL(Cfg.Server.wormhole?.server);
+    if (Config.Server.wormhole?.enable || Config.Server.wormhole?.server || Config.Server.wormhole?.clientId) {
+      const wormholeUrl = new URL(Config.Server.wormhole?.server);
       if (wormholeUrl) {
-        msg.push(segment.text(`代理服务器地址：http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${Cfg.Server.wormhole?.clientId}/\n`))
+        msg.push(segment.text(`代理服务器地址：http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${Config.Server.wormhole?.clientId}/\n`))
       }
     }
-    if (Cfg.Config.panelDomain) {
-      msg.push(segment.text(`公网服务器地址：http://${Cfg.Config.panelDomain}:${Cfg.Server.port || 80}\n`))
+    if (Config.Config.panelDomain) {
+      msg.push(segment.text(`公网服务器地址：http://${Config.Config.panelDomain}:${Config.Server.port || 80}\n`))
     } else {
       const publicIp = await getPublicIp()
-      msg.push(segment.text(`公网服务器地址：http://${publicIp}:${Cfg.Server.port || 80}\n`))
+      msg.push(segment.text(`公网服务器地址：http://${publicIp}:${Config.Server.port || 80}\n`))
     }
     this.reply(msg)
   }

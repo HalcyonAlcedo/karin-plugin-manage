@@ -1,7 +1,7 @@
 import { Renderer, plugin, segment } from '#Karin'
+import { dirname, Config } from '#Plugin'
+import path from 'path'
 import { getLogs } from '../lib/system/index.js'
-import { dirname } from '../index.js'
-import Cfg from '../lib/config.js'
 
 export class System extends plugin {
   constructor () {
@@ -32,7 +32,7 @@ export class System extends plugin {
   }
 
   async log () {
-    if (!this.e.isPrivate && !Cfg.Config.logInGroup) {
+    if (!this.e.isPrivate && !Config.Config.logInGroup) {
       this.reply('请私聊发送')
       return
     }
@@ -54,7 +54,7 @@ export class System extends plugin {
 
     try {
       const filePath = dirname
-      const html = filePath + '/resources/template/Logs.html'
+      const html = path.join(filePath, '/resources/template/Logs.html')
       const logs = getLogs(number[0], level)
       console.log(html)
 
