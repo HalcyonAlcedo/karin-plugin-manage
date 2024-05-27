@@ -50,6 +50,8 @@ export class System extends plugin {
       level = 'MARK'
     } else if (containsAny(msg, ['追踪', 'trace'])){
       level = 'TRACE'
+    } else if (containsAny(msg, ['调试', 'debug'])){
+      level = 'DEBU'
     }
 
     try {

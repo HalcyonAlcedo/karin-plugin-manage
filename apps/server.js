@@ -1,4 +1,4 @@
-import { plugin, segment  } from '#Karin'
+import { plugin, segment } from '#Karin'
 import { Config } from '#Plugin'
 import crypto from 'crypto'
 import axios from 'axios'
@@ -19,7 +19,7 @@ export class Server extends plugin {
       // 监听消息事件 默认message
       event: 'message',
       // 优先级
-      priority: 5000,
+      priority: -10,
       // 以下rule、task、button、handler均为可选，如键入，则必须为数组
       rule: [
         {
@@ -99,7 +99,6 @@ export class Server extends plugin {
     }
   }
   async getPanelAddress () {
-    console.log('test')
     if (!this.e.isPrivate) {
       this.reply('请私聊发送')
       return
