@@ -8,7 +8,6 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: rgba(1, 1, 1, 0);
       margin: 0;
       padding: 0;
     }
@@ -16,7 +15,7 @@
     .container {
       margin: auto;
       padding: 20px;
-      background-color: rgba(233, 255, 248, 0.699);
+      background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
       border-radius: 10px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       position: relative;
@@ -30,7 +29,7 @@
       right: -50px;
       width: 200px;
       height: 200px;
-      background-color: #c16ef16e;
+      background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
       border-radius: 50%;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
       transform: scale(2) rotate(45deg);
@@ -68,12 +67,17 @@
       color: #cfc863;
     }
 
+    .level-debu {
+      color: #3da6e2;
+    }
+
     .level-trace {
       color: #6c4ef0;
     }
 
     .message {
       margin-top: 5px;
+      word-wrap: break-word;
     }
   </style>
 </head>
