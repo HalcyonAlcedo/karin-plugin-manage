@@ -10,7 +10,6 @@ server()
 
 export class Server extends plugin {
   constructor () {
-
     super({
       // 必选 插件名称
       name: 'ManageServer',
@@ -79,6 +78,7 @@ export class Server extends plugin {
       this.reply(`已创建账号\n用户名：${this.e.user_id}\n密码：${password}`)
     }
   }
+
   async changePassword () {
     if (!this.e.isPrivate) {
       this.reply('请私聊发送')
@@ -90,14 +90,15 @@ export class Server extends plugin {
 
     if (UserManager.checkUser(this.e.user_id)) {
       if (password) {
-        this.reply(`密码修改成功`)
+        this.reply('密码修改成功')
       } else {
-        this.reply(`命令错误，正确的格式为[#重置面板管理密码 passwoed]`)
+        this.reply('命令错误，正确的格式为[#重置面板管理密码 passwoed]')
       }
     } else {
       this.reply('账号不存在，如需创建账号请回复[#添加面板管理账号 密码]')
     }
   }
+
   async getPanelAddress () {
     if (!this.e.isPrivate) {
       this.reply('请私聊发送')
@@ -105,14 +106,14 @@ export class Server extends plugin {
     }
     const getPublicIp = async () => {
       const ipApi = Config.Config.ipApi
-      const response = await axios.get(ipApi || 'http://api.ipify.org');
-      return response.data;
+      const response = await axios.get(ipApi || 'http://api.ipify.org')
+      return response.data
     }
     let msg = []
-    msg.push(segment.text(`Karin 管理面板\n\n`))
-    msg.push(segment.text(`你可以登陆官方公共面板 http://karin.alcedo.top/ 输入服务器地址后访问 Karin 管理面板\n\n`))
+    msg.push(segment.text('Karin 管理面板\n\n'))
+    msg.push(segment.text('你可以登陆官方公共面板 http://karin.alcedo.top/ 输入服务器地址后访问 Karin 管理面板\n\n'))
     if (Config.Server.wormhole?.enable || Config.Server.wormhole?.server || Config.Server.wormhole?.clientId) {
-      const wormholeUrl = new URL(Config.Server.wormhole?.server);
+      const wormholeUrl = new URL(Config.Server.wormhole?.server)
       if (wormholeUrl) {
         msg.push(segment.text(`代理服务器地址：http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${Config.Server.wormhole?.clientId}/\n`))
       }
