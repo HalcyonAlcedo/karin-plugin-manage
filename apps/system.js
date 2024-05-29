@@ -5,7 +5,6 @@ import { getLogs } from '../lib/system/index.js'
 
 export class System extends plugin {
   constructor () {
-
     super({
       // 必选 插件名称
       name: 'ManageSystem',
@@ -42,15 +41,15 @@ export class System extends plugin {
     let level = ''
     if (containsAny(msg, ['信息', 'INFO'])) {
       level = 'INFO'
-    } else if (containsAny(msg, ['警告', 'WARN'])){
+    } else if (containsAny(msg, ['警告', 'WARN'])) {
       level = 'WARN'
-    } else if (containsAny(msg, ['错误', '异常', 'ERROR'])){
+    } else if (containsAny(msg, ['错误', '异常', 'ERROR'])) {
       level = 'ERRO'
-    } else if (containsAny(msg, ['标记', 'mark'])){
+    } else if (containsAny(msg, ['标记', 'mark'])) {
       level = 'MARK'
-    } else if (containsAny(msg, ['追踪', 'trace'])){
+    } else if (containsAny(msg, ['追踪', 'trace'])) {
       level = 'TRACE'
-    } else if (containsAny(msg, ['调试', 'debug'])){
+    } else if (containsAny(msg, ['调试', 'debug'])) {
       level = 'DEBU'
     }
 
@@ -62,14 +61,13 @@ export class System extends plugin {
 
       const img = await Renderer.render({
         name: 'Log',
+        file: html,
         data: {
-          tplFile: html,
-          Log: logs,
-          setViewport: {width: 640}
-        }
+          Log: logs
+        },
+        setViewport: { width: 640 }
       })
       return this.reply(segment.image(img))
-
     } catch (e) {
       logger.error(e)
       return this.reply(e.message)
@@ -77,7 +75,7 @@ export class System extends plugin {
   }
 }
 
-function containsAny(str, substrings) {
+function containsAny (str, substrings) {
   return substrings.some(substring =>
     str.toLowerCase().includes(substring.toLowerCase())
   )
