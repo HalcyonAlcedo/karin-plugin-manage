@@ -24,6 +24,11 @@
       comment: 是否允许在群中获取日志
       path: 'logInGroup'
       type: 'boolean'
+    -
+      key: 允许追加数据
+      comment: 是否允许在配置不存在时追加数据
+      path: 'append'
+      type: 'boolean'
 -
   name: 面板api服务配置
   file: server.yaml

@@ -8,3 +8,6 @@ ipApi: http://api.ipify.org
 
 # 是否允许群获取日志
 logInGroup: false
+
+# 允许追加配置数据
+append: true

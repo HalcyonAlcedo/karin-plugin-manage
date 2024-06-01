@@ -57,8 +57,6 @@ export class System extends plugin {
       const filePath = dirname
       const html = path.join(filePath, '/resources/template/Logs.html')
       const logs = getLogs(number[0], level)
-      console.log(html)
-
       const img = await Renderer.render({
         name: 'Log',
         file: html,
