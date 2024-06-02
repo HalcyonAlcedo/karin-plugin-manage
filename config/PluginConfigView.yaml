@@ -25,6 +25,11 @@
       path: 'logInGroup'
       type: 'boolean'
     -
+      key: redis数据库模式
+      comment: 是否使用redis数据库
+      path: 'redis'
+      type: 'boolean'
+    -
       key: 允许追加数据
       comment: 是否允许在配置不存在时追加数据
       path: 'append'
