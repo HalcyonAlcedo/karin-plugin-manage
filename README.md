@@ -44,35 +44,18 @@ Karin Manage 插件只提供面板访问用的api，需要登陆官方或第三�
 如果你有管理面板的账号和密码，你可以点击OR后输入用户名和密码登陆面板
 
 ## 配置
-
-### config.yaml
-
-- **面板域名** - `panelDomain`
-  - 在获取面板访问信息时返回的公共服务器地址将使用此域名
-
-- **获取ip的Api** - `ipApi`
-  - 在获取面板访问信息时将使用此api获取服务器公网ip
+建议在配置好服务后直接登陆面板对插件进行配置
 
 ### server.yaml
 
 - **服务端口** - `port`
   - 面板服务运行的端口
 
-- **调试模式** - `debug`
-  - 将显示fastify的日志
-
 - **wormhole代理** - `wormhole`
   - wormhole的配置，详见wormhole代理说明
     - **启动代理** - `enable`
     - **代理服务器** - `server`
     - **客户端id** - `clientId`
-
-- **token的secretKey** - `secretKey`
-  - 用于账号验证，如非必要请勿手动修改
-
-### user.yaml
-
-- 用于保存账号数据不要修改
 
 
 ## 机器人命令
