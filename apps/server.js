@@ -100,6 +100,7 @@ export class Server extends plugin {
 
     if (UserManager.checkUser(this.e.user_id)) {
       if (password) {
+        await UserManager.changePassword(this.e.user_id, crypto.createHash('md5').update(password).digest('hex'))
         this.reply('密码修改成功')
       } else {
         this.reply('命令错误，正确的格式为[#重置面板管理密码 passwoed]')
