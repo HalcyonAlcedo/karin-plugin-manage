@@ -3,10 +3,10 @@ import { Config } from '#Plugin'
 import crypto from 'crypto'
 import axios from 'axios'
 import { UserManager } from '../lib/user/index.js'
-import server from '../lib/server/index.js'
+import { start, restart } from '../lib/server/index.js'
 
 // 启动面板api
-server()
+start()
 
 export class Server extends plugin {
   constructor () {
@@ -46,6 +46,16 @@ export class Server extends plugin {
           reg: '^#(访问|登陆)(管理|系统)?面板',
           /** 执行方法 */
           fnc: 'getPanelAddress',
+          //  是否显示操作日志 true=是 false=否
+          log: true,
+          // 权限 master,owner,admin,all
+          permission: 'master'
+        },
+        {
+          /** 命令正则匹配 */
+          reg: '^#重启面板(服务)?',
+          /** 执行方法 */
+          fnc: 'restartServer',
           //  是否显示操作日志 true=是 false=否
           log: true,
           // 权限 master,owner,admin,all
@@ -125,5 +135,13 @@ export class Server extends plugin {
       msg.push(segment.text(`公网服务器地址：http://${publicIp}:${Config.Server.port || 80}\n`))
     }
     this.reply(msg)
+  }
+
+  async restartServer () {
+    if (await restart()) {
+      this.reply('面板服务重启成功')
+    } else {
+      this.reply('面板服务重启失败')
+    }
   }
 }
