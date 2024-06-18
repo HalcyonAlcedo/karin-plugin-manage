@@ -1,6 +1,6 @@
 import { Renderer, plugin, segment } from '#Karin'
 import { dirname, Config } from '#Plugin'
-import path from 'path'
+import fs from 'fs'
 import { getLogs } from '../lib/system/index.js'
 
 export class System extends plugin {
@@ -55,14 +55,13 @@ export class System extends plugin {
 
     try {
       const filePath = dirname
-      const html = path.join(filePath, '/resources/template/Logs.html')
+      const vue = fs.readFileSync(`${filePath}/resources/template/Logs.vue`, 'utf8')
       const logs = getLogs(number[0], level)
       const img = await Renderer.render({
         name: 'Log',
-        file: html,
-        data: {
-          Log: logs
-        },
+        file: vue,
+        props: logs,
+        vue: true,
         setViewport: { width: 640 }
       })
       return this.reply(segment.image(img))
