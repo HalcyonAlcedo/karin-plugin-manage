@@ -3,9 +3,6 @@
 # 面板域名
 panelDomain:
 
-# 获取ip的Api
-ipApi: http://api.ipify.org
-
 # 是否允许群获取日志
 logInGroup: false
 

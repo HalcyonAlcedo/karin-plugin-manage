@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-manage",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "author": "Alcedo",
   "type": "module",
   "dependencies": {
@@ -10,7 +10,8 @@
     "@fastify/websocket": "^10.0.1",
     "bcryptjs": "^2.4.3",
     "fastify": "^4.27.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "public-ip": "^6.0.2"
   },
   "imports": {
     "#Karin": "./lib/imports/index.js",

@@ -15,11 +15,6 @@
       # 配置类型
       type: 'text'
     -
-      key: IP获取API
-      comment: 获取ip的Api地址
-      path: 'ipApi'
-      type: 'url'
-    -
       key: 群获取日志
       comment: 是否允许在群中获取日志
       path: 'logInGroup'

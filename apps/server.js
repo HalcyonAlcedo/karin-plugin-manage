@@ -1,7 +1,6 @@
 import { plugin, segment } from '#Karin'
-import { Config } from '#Plugin'
+import { Config, getPublicIp } from '#Plugin'
 import crypto from 'crypto'
-import axios from 'axios'
 import { UserManager } from '../lib/user/index.js'
 import { start, restart } from '../lib/server/index.js'
 
@@ -114,11 +113,6 @@ export class Server extends plugin {
     if (!this.e.isPrivate) {
       this.reply('请私聊发送')
       return
-    }
-    const getPublicIp = async () => {
-      const ipApi = Config.Config.ipApi
-      const response = await axios.get(ipApi || 'http://api.ipify.org')
-      return response.data
     }
     let msg = []
     msg.push(segment.text('Karin 管理面板\n\n'))
