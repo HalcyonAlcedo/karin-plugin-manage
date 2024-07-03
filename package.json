@@ -20,10 +20,5 @@
   },
   "devDependencies": {
     "fastify-tsconfig": "^2.0.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run build"
-    }
   }
 }

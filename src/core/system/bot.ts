@@ -22,8 +22,9 @@ export async function getBotList() {
   for (const k in getBots()) {
     const bot: KarinAdapter | undefined = Bot.getBot(k)
     if (bot) {
-      // TODO: 等待上游
-      // if (!(bot?.socket?._readyState === 1)) continue
+      // TODO: 等待上游添加bot在线检测功能
+      // @ts-ignore
+      if (bot?.socket?._readyState !== 1) continue
       const avatar = bot.getAvatarUrl(k) || `https://q1.qlogo.cn/g?b=qq&s=0&nk=${k}`
       const friends = await bot.GetFriendList()
       const groups = await bot.GetGroupList()

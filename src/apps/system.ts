@@ -57,13 +57,14 @@ export class System extends plugin {
       const filePath = dirname
       const vue = fs.readFileSync(`${filePath}/resources/template/Logs.vue`, 'utf8')
       const logs = getLogs(number[0], level)
-      // FIXME: 等待上游Renderer函数适配vue
+      // TODO: 等待上游Renderer函数适配vue
       const img = await Renderer.render({
         name: 'Log',
-        data: logs,
-        vue: vue,
-        setViewport: { width: 640 },
-        file: ''
+        file: vue,
+        props: logs,
+        // @ts-ignore
+        vue: true,
+        setViewport: { width: 640 }
       }) as string
       return this.reply(segment.image(img))
     } catch (error) {
