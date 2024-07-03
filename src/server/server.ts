@@ -38,7 +38,7 @@ export async function server(options: Options) {
 
   // 注册路由
   await fastify.register(autoLoad, {
-    dir: path.resolve(path.join(dirPath, 'dist/server/routes')),
+    dir: path.resolve(path.join(dirPath, 'lib/server/routes')),
     dirNameRoutePrefix: true
   })
 
