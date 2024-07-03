@@ -1,3 +1,3 @@
-export * from './bot';
-export * from './karin';
-export * from './terminal';
+export * from './bot'
+export * from './karin'
+export * from './terminal'

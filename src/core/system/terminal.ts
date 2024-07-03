@@ -1,18 +1,18 @@
 import { spawn, exec, SpawnSyncOptionsWithStringEncoding, ChildProcess } from 'child_process'
-import { Config } from '../../imports/plugin'
+import { config } from '@plugin/imports'
 import os from 'os'
 import path from 'path'
 import fs from 'fs'
 
 export function executeCommand(command: string, args: any, ws: WebSocket, workingDirectory: string = './'): ChildProcess | null {
 
-  if (!Config.Server.terminal) {
+  if (!config.Server.terminal) {
     ws.send(JSON.stringify({ type: 'error', content: `远程终端已被禁用`, origin: { command, args } }))
     ws.send(JSON.stringify({ type: 'close', content: `进程退出码: 0`, origin: { command, args } }))
     return null
   }
-  const isWindows = os.platform() === 'win32';
-  const shell = isWindows ? 'powershell.exe' : true;
+  const isWindows = os.platform() === 'win32'
+  const shell = isWindows ? 'powershell.exe' : true
 
   if (isWindows) {
     exec('chcp 65001')

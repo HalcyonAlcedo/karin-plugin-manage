@@ -1,23 +1,18 @@
-import crypto from 'crypto'
 import fs from 'fs'
-
-import { YamlEditor, redis as db } from '../../../../../src/index'
+import { YamlEditor, redis as db } from 'node-karin'
 
 class Permissions {
-  tokenTTL: NodeJS.Timeout
-  token: string | null
+  tokenTTL: NodeJS.Timeout | undefined
+  token: string | null | undefined
   secretKey: string
-  OtpTTL: NodeJS.Timeout | null
-  Otp: string | null
+  OtpTTL: NodeJS.Timeout | null | undefined
+  Otp: string | null | undefined
   username: string
 
-  constructor(username: string) {
+  constructor(username: string, secretKey:string) {
     this.username = username
-    this.init()
-  }
-
-  async init() {
-    this.secretKey = await this.getSecretKey()
+    this.secretKey = secretKey
+    this.getToken()
   }
 
   tempYaml(): YamlEditor {
@@ -25,30 +20,6 @@ class Permissions {
       fs.writeFileSync('data/karin-plugin-manage/temp.yaml', '', 'utf8')
     }
     return new YamlEditor('data/karin-plugin-manage/temp.yaml')
-  }
-
-  /**
-   * 获取secretKey
-   * @returns {string} secretKey
-   */
-  async getSecretKey() {
-    const tempData = this.tempYaml()
-    let secretKey: string
-    try {
-      secretKey = await db.get(`karin-plugin-manage:secretKey`) || ''
-    } catch (error) {
-      secretKey = tempData.get('secretKey')
-    }
-    if (!secretKey) {
-      secretKey = crypto.randomBytes(64).toString('hex')
-      try {
-        await db.set('karin-plugin-manage:secretKey', secretKey)
-      } catch (error) {
-        tempData.set('secretKey', secretKey)
-        tempData.save()
-      }
-    }
-    return secretKey
   }
 
   /**
@@ -104,7 +75,7 @@ class Permissions {
   * @param {string} token Token
   * @param {boolean} remember 是否记住登陆状态
   */
-  async setToken(token: string, remember: boolean): Promise<void> {
+  async setToken(token: string, remember?: boolean): Promise<void> {
     try {
       await db.set(`karin-plugin-manage:user:${this.username}:token`, token, remember ? undefined : { EX: 60 * 60 })
     } catch (error) {

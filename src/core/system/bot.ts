@@ -1,5 +1,5 @@
-import { getBots } from '../../imports/adapter'
-import { Bot, KarinAdapter } from '../../../../../src/index'
+import { getBots } from '@plugin/imports'
+import { Bot, KarinAdapter } from 'node-karin'
 
 interface BotList {
   uin: string
@@ -13,12 +13,17 @@ interface BotList {
   adapter: KarinAdapter["adapter"]
 }
 
-const getBotList = async () => {
+/**
+* 获取bot列表
+* @returns {BotList[]} bot列表
+*/
+export async function getBotList() {
   let list: BotList[] = []
   for (const k in getBots()) {
     const bot: KarinAdapter | undefined = Bot.getBot(k)
     if (bot) {
-      if (bot?.socket && bot?.socket?.readyState !== 1) continue
+      // TODO: 等待上游
+      // if (!(bot?.socket?._readyState === 1)) continue
       const avatar = bot.getAvatarUrl(k) || `https://q1.qlogo.cn/g?b=qq&s=0&nk=${k}`
       const friends = await bot.GetFriendList()
       const groups = await bot.GetGroupList()
@@ -37,9 +42,3 @@ const getBotList = async () => {
   }
   return list
 }
-
-export {
-  getBotList
-}
-
-

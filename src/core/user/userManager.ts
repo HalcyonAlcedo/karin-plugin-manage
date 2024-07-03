@@ -1,10 +1,10 @@
-import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import Yaml from 'yaml'
 import fs from 'fs'
-
-import { YamlEditor, redis as db } from '../../../../../src/index'
-import { md5 } from '../utils'
+import { YamlEditor, redis as db } from 'node-karin'
+import { common } from '@plugin/imports'
 import Permissions from './permissions'
 
 interface User {
@@ -23,13 +23,23 @@ interface UserLogin {
 
 class UserManager {
   users: User[]
+  secretKey: string | undefined
 
   constructor() {
+    this.users = []
     this.init()
   }
 
   async init() {
+    this.secretKey = await this.getSecretKey()
     this.users = this.loadUsersFromYAML()
+  }
+
+  tempYaml(): YamlEditor {
+    if (!fs.existsSync('data/karin-plugin-manage/temp.yaml')) {
+      fs.writeFileSync('data/karin-plugin-manage/temp.yaml', '', 'utf8')
+    }
+    return new YamlEditor('data/karin-plugin-manage/temp.yaml')
   }
 
   /**
@@ -42,9 +52,38 @@ class UserManager {
       fs.writeFileSync('data/karin-plugin-manage/user.yaml', '', 'utf8')
     }
     const yamlEditor = new YamlEditor('data/karin-plugin-manage/user.yaml')
-    return yamlEditor.get('') || [];
+    let userData = yamlEditor.get('') || []
+    if (this.secretKey) {
+      for (const i in userData) {
+        userData[i].permissions = new Permissions(userData[i].username, this.secretKey)
+      }
+    }
+    return userData
   }
 
+  /**
+   * 获取secretKey
+   * @returns {string} secretKey
+   */
+  async getSecretKey() {
+    const tempData = this.tempYaml()
+    let secretKey: string
+    try {
+      secretKey = await db.get(`karin-plugin-manage:secretKey`) ?? ''
+    } catch (error) {
+      secretKey = tempData.get('secretKey')
+    }
+    if (!secretKey) {
+      secretKey = crypto.randomBytes(64).toString('hex')
+      try {
+        await db.set('karin-plugin-manage:secretKey', secretKey)
+      } catch (error) {
+        tempData.set('secretKey', secretKey)
+        tempData.save()
+      }
+    }
+    return secretKey
+  }
 
 
   /**
@@ -54,17 +93,17 @@ class UserManager {
    * @param {any} routes 权限
    */
   addUser(username: string, password: string, routes: any) {
-    if (this.checkUser(username)) return
-    const hashedPassword: string = bcrypt.hashSync(md5(password), 10);
+    if (this.checkUser(username) || !this.secretKey) return
+    const hashedPassword: string = bcrypt.hashSync(common.md5(password), 10)
     const newUser: User = {
       username,
       password: hashedPassword,
       routes,
       status: 'enabled', // 默认启用账号
-      permissions: new Permissions(username)
-    };
-    this.users.push(newUser);
-    this.saveUserToYAML(newUser);
+      permissions: new Permissions(username, this.secretKey)
+    }
+    this.users.push(newUser)
+    this.saveUserToYAML(newUser)
   }
 
   saveUserToYAML(user: User) {
@@ -98,7 +137,7 @@ class UserManager {
                     } else {
                       const yamlSeq = new Yaml.YAMLSeq()
                       value.forEach((element: unknown) => {
-                        yamlSeq.add(element);
+                        yamlSeq.add(element)
                       })
                       yMap.value = yamlSeq
                     }
@@ -116,7 +155,7 @@ class UserManager {
   /**
    * 检查用户是否存在
    * @param {string} username 用户名
-   * @returns {boolean} 用户信息
+   * @returns {boolean} 是否存在
    */
   checkUser(username: string): boolean {
     const user = this.users.find(u => u.username === username)
@@ -131,13 +170,13 @@ class UserManager {
    * @returns {UserLogin|null} 用户信息
    */
   // 系统登录接口
-  async login(username: string, password: string, remember: boolean): Promise<UserLogin | null> {
-    const user = this.users.find(u => u.username === username)
+  async login(username: string, password: string, remember?: boolean): Promise<UserLogin | null> {
+    const user: User | undefined = this.users.find(u => u.username === username)
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return null
     }
 
-    const token: string | undefined = jwt.sign({ username, routes: user.routes }, user.permissions.secretKey, remember ? undefined : { expiresIn: '1h' });
+    const token: string | undefined = jwt.sign({ username, routes: user.routes }, user.permissions?.secretKey ?? '', remember ? undefined : { expiresIn: '1h' })
     if (token) {
       await user.permissions.setToken(token, remember)
       const tokenExpiry = remember ? null : new Date(new Date().getTime() + 60 * 60 * 1000)
@@ -153,7 +192,7 @@ class UserManager {
    * @returns {UserLogin|null} 用户信息
    */
   async quickLogin(otp: string, username: string): Promise<UserLogin | null> {
-    let user = this.users.find(u => u.username === username);
+    let user = this.users.find(u => u.username === username)
     if (!user) {
       user = this.users.find(u => bcrypt.compareSync(u.username.toString(), username.toString()))
     }
@@ -162,7 +201,7 @@ class UserManager {
       if (otp != auth) {
         return null
       }
-      const token: string | undefined = jwt.sign({ username, routes: user.routes }, user.permissions.secretKey, { expiresIn: '1h' })
+      const token: string | undefined = jwt.sign({ username, routes: user.routes }, user.permissions?.secretKey ?? '', { expiresIn: '1h' })
       if (token) {
         await user.permissions.setToken(token, false)
         await user.permissions.delOtp()

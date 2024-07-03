@@ -1,5 +1,4 @@
-import { Renderer } from '../../../../../src/index'
-import { KarinRenderApp } from '../../../../../src/types/index'
+import { Renderer, KarinRenderApp } from 'node-karin'
 import fs from 'fs'
 import path from 'path'
 
@@ -76,15 +75,26 @@ function parseLogData(logData: string, numRecords: number | string | number[] | 
   return records
 }
 
+/**
+* 获取RenderApp列表
+* @returns {Promise<KarinRenderApp[]>} RenderApp列表
+*/
 export async function getRendererList(): Promise<KarinRenderApp[]> {
   return Renderer.Apps
 }
 
-export function getLogs(numRecords: number | string | number[] | Records | null, filterLevel: string, lastTimestamp: string) {
+/**
+* 查询日志
+* @param {number | string | number[] | Records | null} numRecords 查询参数
+* @param {string} filterLevel 日志等级
+* @param {string} lastTimestamp 查询时间
+* @returns {Log[]} 日志列表
+*/
+export function getLogs(numRecords: number | string | number[] | Records | null, filterLevel: string = 'ALL', lastTimestamp: string = '') {
   const logsDir = path.resolve('logs/')
   const files = fs.readdirSync(logsDir)
   const logFileRegex = /logger\.\d{4}-\d{2}-\d{2}\.log$/
-  const sortedFiles = files.filter(file => logFileRegex.test(file)).sort().reverse()
+  const sortedFiles = files.filter(file => logFileRegex.test(file)).sort((a, b) => a.localeCompare(b)).reverse()
   const latestLogFile = sortedFiles[0]
   if (latestLogFile) {
     const latestLogPath = path.join(logsDir, latestLogFile)
