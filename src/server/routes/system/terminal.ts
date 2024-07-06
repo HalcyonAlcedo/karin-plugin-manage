@@ -1,9 +1,10 @@
+import { FastifyInstance } from 'fastify/types/instance'
 import { executeCommand } from '@plugin/core/system'
 import { ChildProcess } from 'child_process'
 
-export default async (fastify:any) => {
+export default async (fastify: FastifyInstance) => {
   // 终端
-  await fastify.get('/Terminal', { websocket: true }, async (connection:any, _request:any) => {
+  fastify.get('/Terminal', { websocket: true }, async (connection) => {
     let childProcess: ChildProcess | null
 
     connection.on('message', (message: string) => {

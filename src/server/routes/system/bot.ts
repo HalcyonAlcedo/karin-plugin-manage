@@ -1,12 +1,20 @@
+import { FastifyInstance } from 'fastify/types/instance'
 import { getBotList } from '@plugin/core/system'
 
-export default async (fastify:any) => {
+export default async (fastify: FastifyInstance) => {
   // 获取Bot列表
-  await fastify.post('/GetBotList', async (_request:any, reply:any) => {
-    const botList = await getBotList()
-    return reply.send({
-      status: 'success',
-      data: botList
-    })
+  fastify.post('/GetBotList', async (_request, reply) => {
+    try {
+      const botList = await getBotList()
+      return reply.send({
+        status: 'success',
+        data: botList
+      })
+    } catch (error: any) {
+      return reply.code(500).send({
+        status: 'failed',
+        meaasge: error.toString()
+      })
+    }
   })
 }

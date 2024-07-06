@@ -1,6 +1,6 @@
 /**
 * 获取Karin配置列表
-* @returns {array} 验证码
+* @returns {array} 配置列表
 */
 export declare function getKarinConfigList(): string[];
 /**

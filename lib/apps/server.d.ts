@@ -1,8 +1,4 @@
-import { Plugin } from 'node-karin';
-export declare class Server extends Plugin {
-    constructor();
-    addAdminUser(): Promise<void>;
-    changePassword(): Promise<void>;
-    getPanelAddress(): Promise<void>;
-    restartServer(): Promise<void>;
-}
+export declare const addUser: import("node-karin").PluginApps;
+export declare const changePassword: import("node-karin").PluginApps;
+export declare const panelAddress: import("node-karin").PluginApps;
+export declare const restartServer: import("node-karin").PluginApps;

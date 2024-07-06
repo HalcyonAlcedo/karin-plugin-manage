@@ -4,7 +4,7 @@ import os from 'os'
 import path from 'path'
 import fs from 'fs'
 
-export function executeCommand(command: string, args: any, ws: WebSocket, workingDirectory: string = './'): ChildProcess | null {
+export function executeCommand(command: string, args: any, ws: WebSocket | any, workingDirectory: string = './'): ChildProcess | null {
 
   if (!config.Server.terminal) {
     ws.send(JSON.stringify({ type: 'error', content: `远程终端已被禁用`, origin: { command, args } }))

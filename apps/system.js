@@ -1,3 +1,3 @@
-import { System } from '../lib/apps/system.js';
+import * as  System from '../lib/apps/system.js';
 
 export { System }

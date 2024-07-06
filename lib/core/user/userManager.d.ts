@@ -8,6 +8,7 @@ interface User {
     permissions: Permissions;
 }
 interface UserLogin {
+    user?: string;
     token: string;
     tokenExpiry: Date | null;
     routes: Array<string>;

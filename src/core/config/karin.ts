@@ -5,7 +5,7 @@ import { config } from '@plugin/imports'
 
 /**
 * 获取Karin配置列表
-* @returns {array} 验证码
+* @returns {array} 配置列表
 */
 export function getKarinConfigList() {
   let configs = []

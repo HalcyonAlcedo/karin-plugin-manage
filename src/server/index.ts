@@ -1,23 +1,23 @@
 import { logger } from 'node-karin'
 import { config, dirPath } from '@plugin/imports'
 import { startServer, restartServer } from './server'
+import { FastifyInstance } from 'fastify/types/instance'
 import wormhole from './wormhole'
 
-let fastify:any
+let fastify: FastifyInstance | undefined
 
 // 启动服务器
 export async function start() {
   if (fastify) return
-  const options = {
-    port: config.Server.port,
-    debug: config.Server.debug,
-    dirname: dirPath
-  }
   try {
     // 启动wormhole客户端
     wormhole()
     // 启动api服务
-    fastify = await startServer(options)
+    fastify = await startServer({
+      port: config.Server.port,
+      debug: config.Server.debug,
+      dirname: dirPath
+    })
     logger.info(`karin-plugin-manage服务已启动，端口:${config.Server.port || 3000}`)
   } catch (err) {
     logger.error('启动karin-plugin-manage服务时出错:', err)
@@ -27,15 +27,14 @@ export async function start() {
 // 重启服务器
 export async function restart() {
   if (!fastify) return false
-  const options = {
-    port: config.Server.port,
-    debug: config.Server.debug,
-    dirname: dirPath
-  }
   try {
     logger.info(`karin-plugin-manage服务重启中...`)
     // 重启api服务
-    fastify = await restartServer(fastify, options)
+    fastify = await restartServer(fastify, {
+      port: config.Server.port,
+      debug: config.Server.debug,
+      dirname: dirPath
+    })
     logger.info(`karin-plugin-manage服务已重启，端口:${config.Server.port || 3000}`)
     return true
   } catch (err) {

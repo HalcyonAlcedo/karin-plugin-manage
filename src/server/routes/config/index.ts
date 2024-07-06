@@ -1,13 +1,14 @@
+import { FastifyInstance } from 'fastify/types/instance'
 import PluginPost from './plugin'
 import KarinPost from './karin'
 import WidgetsPost from './widgets'
-export default async (fastify:any, _options:any) => {
+
+export default async (fastify:FastifyInstance) => {
   /**
    * GET请求
    */
-
   // 默认页面
-  await fastify.get('/', async (_request:any, reply:any) => {
+  fastify.get('/', async (_request, reply) => {
     return reply.sendFile('page/config/index.html')
   })
 

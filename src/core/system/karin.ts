@@ -2,7 +2,7 @@ import { Renderer, KarinRenderApp } from 'node-karin'
 import fs from 'fs'
 import path from 'path'
 
-interface Log {
+export interface Log {
   timestamp: string
   level: string
   message: string

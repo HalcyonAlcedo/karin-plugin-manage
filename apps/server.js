@@ -1,3 +1,3 @@
-import { Server } from '../lib/apps/server.js';
+import * as Server from '../lib/apps/server.js';
 
 export { Server }

@@ -16,6 +16,7 @@ interface User {
 }
 
 interface UserLogin {
+  user?:string
   token: string
   tokenExpiry: Date | null
   routes: Array<string>
@@ -201,12 +202,12 @@ class UserManager {
       if (otp != auth) {
         return null
       }
-      const token: string | undefined = jwt.sign({ username, routes: user.routes }, user.permissions?.secretKey ?? '', { expiresIn: '1h' })
+      const token: string | undefined = jwt.sign({ username: user.username, routes: user.routes }, user.permissions?.secretKey ?? '', { expiresIn: '1h' })
       if (token) {
         await user.permissions.setToken(token, false)
         await user.permissions.delOtp()
         const tokenExpiry = new Date(new Date().getTime() + 60 * 60 * 1000)
-        return { token, tokenExpiry, routes: user.routes }
+        return { user: user.username,token, tokenExpiry, routes: user.routes }
       }
     }
     return null

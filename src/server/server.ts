@@ -8,13 +8,14 @@ import fs from 'fs'
 import routesManagement from './routes'
 import { getPluginsList } from '@plugin/core/config'
 import { dirPath } from '@plugin/imports'
+import { FastifyInstance } from 'fastify/types/instance'
 
 interface Options {
   port: number
   debug: boolean
   dirname: string
 }
-export async function server(options: Options) {
+export async function server(options: Options): Promise<FastifyInstance> {
   // 创建Fastify实例
   const fastify = Fastify({ logger: options.debug })
 
@@ -57,7 +58,7 @@ export async function server(options: Options) {
   return fastify
 }
 
-export async function startServer(options: Options) {
+export async function startServer(options: Options): Promise<FastifyInstance> {
   // 初始化服务器
   const fastify = await server(options)
   // 创建监听
@@ -65,7 +66,7 @@ export async function startServer(options: Options) {
   return fastify
 }
 
-export async function restartServer(fastifyInstance: { close: () => any }, options: Options) {
+export async function restartServer(fastifyInstance: FastifyInstance, options: Options): Promise<FastifyInstance> {
   await fastifyInstance.close()
   // 初始化服务器
   const fastify = await server(options)

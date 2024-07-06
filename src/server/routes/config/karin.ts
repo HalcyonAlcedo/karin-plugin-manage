@@ -1,7 +1,9 @@
+import { FastifyInstance } from 'fastify/types/instance'
 import { getKarinConfigList, getKarinConfig, setKarinConfig } from '@plugin/core/config'
-export default async (fastify: any) => {
+
+export default async (fastify: FastifyInstance) => {
   // 获取Karin配置列表
-  await fastify.post('/GetKarinConfigList', async (_request: any, reply: any) => {
+  fastify.post('/GetKarinConfigList', async (_request, reply) => {
     return reply.send({
       status: 'success',
       data: getKarinConfigList()
@@ -9,8 +11,8 @@ export default async (fastify: any) => {
   })
 
   // 获取Karin配置
-  await fastify.post('/GetKarinConfig', async (request: any, reply: any) => {
-    const { file } = request.body
+  fastify.post('/GetKarinConfig', async (request, reply) => {
+    const { file } = request.body as { file: string }
     const files = getKarinConfigList()
     if (file && files.includes(file)) {
       const result = getKarinConfig(file)
@@ -30,8 +32,8 @@ export default async (fastify: any) => {
   })
 
   // 设置Karin配置
-  await fastify.post('/SetKarinConfig', async (request: any, reply: any) => {
-    const { file, config } = request.body
+  fastify.post('/SetKarinConfig', async (request, reply) => {
+    const { file, config } = request.body as { file: string, config: Array<{ file: string, key: string, value: string | boolean }> }
     const files = getKarinConfigList()
     let changeConfig = []
     for (let cfg of config) {

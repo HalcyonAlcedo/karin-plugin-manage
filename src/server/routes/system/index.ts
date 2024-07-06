@@ -1,21 +1,22 @@
+import { FastifyInstance } from 'fastify/types/instance'
 import Bot from './bot'
 import Karin from './karin'
 import Terminal from './terminal'
 
-export default async (fastify: any, _options: any) => {
+export default async (fastify: FastifyInstance) => {
 
   /**
    * GET请求
    */
   // 默认页面
-  await fastify.get('/', async (_request: any, reply: any) => {
+  fastify.get('/', async (_request, reply) => {
     return reply.sendFile('page/system/index.html')
   })
 
   /**
    * POST请求
    */
-  await fastify.post('/verify', async (_request: any, reply: any) => {
+  fastify.post('/verify', async (_request, reply) => {
     reply.send({ status: 'success', message: 'verify success' })
   })
 

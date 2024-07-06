@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Plugin, segment } from 'node-karin'
+import { segment, karin } from 'node-karin'
 import { common, config } from '@plugin/imports'
 import { UserManager } from '@plugin/core/user'
 import { start, restart } from '@plugin/server'
@@ -7,115 +7,67 @@ import { start, restart } from '@plugin/server'
 // 启动面板api
 start()
 
-export class Server extends Plugin {
-  constructor () {
-    super({
-      // 必选 插件名称
-      name: 'ManageServer',
-      // 插件描述
-      dsc: '管理面板服务',
-      // 监听消息事件 默认message
-      event: 'message',
-      // 优先级
-      priority: -10,
-      // 以下rule、task、button、handler均为可选，如键入，则必须为数组
-      rule: [
-        {
-          /** 命令正则匹配 */
-          reg: '^#(添加|创建)面板管理账号',
-          /** 执行方法 */
-          fnc: 'addAdminUser',
-          //  是否显示操作日志 true=是 false=否
-          log: true,
-          // 权限 master,owner,admin,all
-          permission: 'master'
-        },
-        {
-          /** 命令正则匹配 */
-          reg: '^#(重置|修改)面板管理密码',
-          /** 执行方法 */
-          fnc: 'changePassword',
-          //  是否显示操作日志 true=是 false=否
-          log: true,
-          // 权限 master,owner,admin,all
-          permission: 'master'
-        },
-        {
-          /** 命令正则匹配 */
-          reg: '^#(访问|登陆)(管理|系统)?(面板|Manage|manage)',
-          /** 执行方法 */
-          fnc: 'getPanelAddress',
-          //  是否显示操作日志 true=是 false=否
-          log: true,
-          // 权限 master,owner,admin,all
-          permission: 'master'
-        },
-        {
-          /** 命令正则匹配 */
-          reg: '^#重启面板(服务)?',
-          /** 执行方法 */
-          fnc: 'restartServer',
-          //  是否显示操作日志 true=是 false=否
-          log: true,
-          // 权限 master,owner,admin,all
-          permission: 'master'
-        }
-      ]
-    })
-  }
-
-  async addAdminUser () {
+// 创建面板管理账号
+export const addUser = karin.command(
+  /^#(添加|创建)面板管理账号/,
+  async (e) => {
     // 判断是否群聊
-    if (!this.e.isPrivate) {
-      this.reply('请私聊发送')
-      return
+    if (!e.isPrivate) {
+      return e.reply('请私聊发送') !== undefined
     }
-
-    let msg = this.e.msg
-    let password = msg.replace(/^#(添加|创建)面板管理账号/, '').replace(/[\s\r\n]+/g, '')
+    // 获取消息中的密码
+    let password: string = e.msg.replace(/^#(添加|创建)面板管理账号/, '').replace(/[\s\r\n]+/g, '')
 
     // 检查账号状态
-    if (UserManager.checkUser(this.e.user_id)) {
+    if (UserManager.checkUser(e.user_id)) {
       if (password) {
-        UserManager.changePassword(this.e.user_id, crypto.createHash('md5').update(password).digest('hex'))
-        this.reply(`检测到账号${this.e.user_id}已存在，密码修改为${password}`)
+        UserManager.changePassword(e.user_id, crypto.createHash('md5').update(password).digest('hex'))
+        return e.reply(`检测到账号${e.user_id}已存在，密码修改为${password}`) !== undefined
       } else {
-        this.reply(`检测到账号${this.e.user_id}已存在，你可以回复[#重置面板管理密码 passwoed]进行密码重置`)
+        return e.reply(`检测到账号${e.user_id}已存在，你可以回复[#重置面板管理密码 passwoed]进行密码重置`) !== undefined
       }
     } else {
       if (!password) {
         password = crypto.randomBytes(32).toString().replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
       }
-      UserManager.addUser(this.e.user_id, password, ['^/user/.*$', '^/config/.*$', '^/system/.*$'])
-      this.reply(`已创建账号\n用户名：${this.e.user_id}\n密码：${password}`)
+      UserManager.addUser(e.user_id, password, ['^/user/.*$', '^/config/.*$', '^/system/.*$'])
+      return e.reply(`已创建账号\n用户名：${e.user_id}\n密码：${password}`) !== undefined
     }
-  }
+  },
+  { permission: 'master', priority: -10 }
+)
 
-  async changePassword () {
-    if (!this.e.isPrivate) {
-      this.reply('请私聊发送')
-      return
+// 修改面板管理账号密码
+export const changePassword = karin.command(
+  /^#(重置|修改)面板管理密码/,
+  async (e) => {
+    // 判断是否群聊
+    if (!e.isPrivate) {
+      return e.reply('请私聊发送') !== undefined
     }
-
-    let msg = this.e.msg
-    let password = msg.replace(/^#(重置|修改)面板管理密码/, '').replace(/[\s\r\n]+/g, '')
-
-    if (UserManager.checkUser(this.e.user_id)) {
+    // 获取消息中的密码
+    let password:string = e.msg.replace(/^#(重置|修改)面板管理密码/, '').replace(/[\s\r\n]+/g, '')
+    // 检查账号状态
+    if (UserManager.checkUser(e.user_id)) {
       if (password) {
-        await UserManager.changePassword(this.e.user_id, crypto.createHash('md5').update(password).digest('hex'))
-        this.reply('密码修改成功')
+        UserManager.changePassword(e.user_id, crypto.createHash('md5').update(password).digest('hex'))
+        return e.reply('密码修改成功') !== undefined
       } else {
-        this.reply('命令错误，正确的格式为[#重置面板管理密码 passwoed]')
+        return e.reply('命令错误，正确的格式为[#重置面板管理密码 passwoed]') !== undefined
       }
     } else {
-      this.reply('账号不存在，如需创建账号请回复[#添加面板管理账号 密码]')
+      return e.reply('账号不存在，如需创建账号请回复[#添加面板管理账号 密码]') !== undefined
     }
-  }
+  },
+  { permission: 'master', priority: -10 }
+)
 
-  async getPanelAddress () {
-    if (!this.e.isPrivate) {
-      this.reply('请私聊发送')
-      return
+export const panelAddress = karin.command(
+  /^#(访问|登陆)(管理|系统)?(面板|Manage|manage)/,
+  async (e) => {
+    // 判断是否群聊
+    if (!e.isPrivate) {
+      return e.reply('请私聊发送') !== undefined
     }
     let msg = []
     msg.push(segment.text('Karin 管理面板\n\n'))
@@ -132,14 +84,19 @@ export class Server extends Plugin {
       const publicIp = await common.getPublicIp()
       msg.push(segment.text(`公网服务器地址：http://${publicIp}:${config.Server.port || 80}\n`))
     }
-    this.reply(msg)
-  }
+    return e.reply(msg) !== undefined
+  },
+  { permission: 'master', priority: -10 }
+)
 
-  async restartServer () {
-    if (await restart()) {
-      this.reply('面板服务重启成功')
-    } else {
-      this.reply('面板服务重启失败')
+export const restartServer = karin.command(
+  /^#重启面板(服务)?/,
+  async (e) => {
+    // 判断是否群聊
+    if (!e.isPrivate) {
+      return e.reply('请私聊发送') !== undefined
     }
-  }
-}
+    return await restart() ? e.reply('面板服务重启成功') !== undefined : e.reply('面板服务重启失败') !== undefined
+  },
+  { permission: 'master', priority: -10 }
+)
