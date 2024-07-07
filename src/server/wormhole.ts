@@ -4,15 +4,15 @@ import jwt from 'jsonwebtoken'
 import { logger, Cfg as karinCfg } from 'node-karin'
 import { config as Cfg } from '@plugin/imports'
 import { UserManager } from '@plugin/core/user'
-const Config = Cfg.Server
-const clientId = Config.wormhole?.clientId
-const wsUrl = Config.wormhole?.server + clientId
 
 let ws: WebSocket
 let adapter: WebSocket | null
 let reConnect: NodeJS.Timeout | undefined
 
 const wormhole = () => {
+  const Config = Cfg.Server
+  const clientId = Config.wormhole?.clientId
+  const wsUrl = Config.wormhole?.server + clientId
 
   if (!Config.wormhole?.enable) return
   if (!Config.wormhole?.clientId || !Config.wormhole?.server) {

@@ -12,6 +12,10 @@ export async function start() {
   try {
     // 启动wormhole客户端
     wormhole()
+  } catch (error) {
+    logger.error('启动manage-wormhole服务时出错:', error)
+  }
+  try {
     // 启动api服务
     fastify = await startServer({
       port: config.Server.port,

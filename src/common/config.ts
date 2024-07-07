@@ -29,7 +29,7 @@ export const config = new (class Cfg {
   /** 初始化配置 */
   async initCfg() {
     if (!fs.existsSync(this._path)) fs.mkdirSync(this._path)
-    this._path = process.cwd() + '/config/config'
+    this._path = this.dir + '/config/config'
     if (!fs.existsSync(this._path)) fs.mkdirSync(this._path)
     const files = fs.readdirSync(this._pathDef).filter(file => file.endsWith('.yaml'))
     for (const file of files) {
