@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { Renderer, plugin, segment, logger, karin } from 'node-karin'
+import { Renderer, segment, logger, karin } from 'node-karin'
 import { dirname, config } from '@plugin/imports'
 import { getLogs } from '@plugin/core/system'
 
@@ -54,7 +54,7 @@ export const log = karin.command(
  * @param {string[]} substrings
  * @returns {boolean}
  */
-function containsAny(str: string, substrings: string[]) {
+function containsAny(str: string, substrings: string[]): boolean {
   return substrings.some(substring =>
     str.toLowerCase().includes(substring.toLowerCase())
   )

@@ -1,3 +1,3 @@
-import * as  System from '../lib/apps/system.js';
+import { log } from '../lib/apps/system.js';
 
-export { System }
+export default log

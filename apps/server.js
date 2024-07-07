@@ -1,3 +1,3 @@
-import * as Server from '../lib/apps/server.js';
+import { addUser, changePassword, panelAddress, restartServer } from '../lib/apps/server.js';
 
-export { Server }
+export { addUser, changePassword, panelAddress, restartServer }
