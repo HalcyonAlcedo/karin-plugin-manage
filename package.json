@@ -6,6 +6,13 @@
   "scripts": {
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json"
   },
+  "karin": {
+    "apps": [
+      "lib/apps"
+    ],
+    "outDir": "lib",
+    "rootDir": "src"
+  },
   "dependencies": {
     "@fastify/autoload": "^5.9.0",
     "@fastify/cors": "^9.0.1",
