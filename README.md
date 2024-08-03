@@ -6,8 +6,14 @@
 
 karin根目录执行以下命令安装Karin Manage插件
 
+### 国外推荐(GitHub)
 ```bash
-git clone https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
+git clone --depth=1 https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
+```
+
+### 国内推荐(ghproxy)
+```bash
+git clone --depth=1 https://mirror.ghproxy.com/https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
 ```
 
 安装依赖
