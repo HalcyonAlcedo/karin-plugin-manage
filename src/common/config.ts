@@ -12,7 +12,7 @@ export const config = new (class Cfg {
   change: Map<string, any>
   watcher: Map<string, any>
   review: boolean
-  constructor() {
+  constructor () {
     this.dir = dirPath
     this._path = this.dir + '/config'
     this._pathDef = this.dir + '/config/defSet'
@@ -27,7 +27,7 @@ export const config = new (class Cfg {
   }
 
   /** 初始化配置 */
-  async initCfg() {
+  async initCfg () {
     if (!fs.existsSync(this._path)) fs.mkdirSync(this._path)
     this._path = this.dir + '/config/config'
     if (!fs.existsSync(this._path)) fs.mkdirSync(this._path)
@@ -42,7 +42,7 @@ export const config = new (class Cfg {
   /**
    * 基本配置
    */
-  get Config(): {
+  get Config (): {
     redis: any
     append: any
     logInGroup: any
@@ -63,7 +63,7 @@ export const config = new (class Cfg {
     return data
   }
 
-  get Server(): {
+  get Server (): {
     debug: any
     terminal: any
     port: number
@@ -88,7 +88,7 @@ export const config = new (class Cfg {
    * packageon
    * 实时获取packageon文件
    */
-  get package(): any {
+  get package (): any {
     const data = fs.readFileSync('./package.json', 'utf8')
     const pack = JSON.parse(data)
     return pack
@@ -97,7 +97,7 @@ export const config = new (class Cfg {
   /**
    * 获取配置yaml
    */
-  getYaml(type: 'defSet' | 'config', name: string, isWatch = false) {
+  getYaml (type: 'defSet' | 'config', name: string, isWatch = false) {
     /** 文件路径 */
     const file = `${this.dir}/config/${type}/${name}.yaml`
 
@@ -115,7 +115,7 @@ export const config = new (class Cfg {
    * @param {string} name 文件名称 不带后缀
    * @param {string} file 文件路径
    */
-  async watch(type: 'defSet' | 'config', name: string, file: string) {
+  async watch (type: 'defSet' | 'config', name: string, file: string) {
     const key = `change.${name}`
     /** 已经监听过了 */
     const res = this.change.get(key)

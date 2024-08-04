@@ -3,7 +3,7 @@ import { dirName } from 'node-karin';
 * 获取插件列表
 * @returns {Array} 插件列表
 */
-export declare function getPluginsList(): `karin-plugin-${string}`[];
+export declare function getPluginsList(): string[];
 /**
 * 获取单插件列表
 * @returns {Array} 单插件列表
@@ -37,7 +37,7 @@ export declare function getPluginConfig(plugin: dirName): {
 * @returns {object|undefined} 变动项
 */
 export declare function setPluginConfig(plugin: dirName, file: string, key: string, value: string | boolean): {
-    plugin: `karin-plugin-${string}`;
+    plugin: string;
     file: string;
     key: string;
     value: any;
@@ -48,7 +48,7 @@ export declare function setPluginConfig(plugin: dirName, file: string, key: stri
 * @returns {Array} 小组件信息
 */
 export declare function GetAllPluginWidgets(): Promise<{
-    plugin: `karin-plugin-${string}`;
+    plugin: string;
     file: string;
     widget: string;
     data: any;
@@ -59,7 +59,7 @@ export declare function GetAllPluginWidgets(): Promise<{
 * @returns {Array} 小组件信息
 */
 export declare function GetPluginWidgets(plugin: dirName): Promise<{
-    plugin: `karin-plugin-${string}`;
+    plugin: string;
     file: string;
     widget: string;
     data: any;

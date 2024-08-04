@@ -1,14 +1,14 @@
 import fs from 'fs'
 import path from 'path'
-import { YamlEditor, logger } from 'node-karin'
+import { YamlEditor, logger, config as Cfg } from 'node-karin'
 import { config } from '@plugin/imports'
 
 /**
 * 获取Karin配置列表
 * @returns {array} 配置列表
 */
-export function getKarinConfigList() {
-  let configs = []
+export function getKarinConfigList () {
+  const configs = []
   if (fs.existsSync('config/config/')) {
     const yamlFiles = fs.readdirSync('config/config/').filter(file => file.endsWith('.yaml'))
     for (const cfg of yamlFiles) {
@@ -31,17 +31,16 @@ interface View {
   value: any
 }
 
-
-function deconstruct(pair: any, yamlPath: string = ''): any[] {
+function deconstruct (pair: any, yamlPath: string = ''): any[] {
   if (pair.constructor.name != 'Pair') {
     return [pair.value || pair]
   }
   yamlPath = pair.key ? `${yamlPath}${yamlPath ? '.' : ''}${pair.key.value}` : ''
-  let configData = []
+  const configData = []
   let configValue: any[] | string | null | undefined
   if (pair.value.items) {
     configValue = []
-    for (let pairData of pair.value.items) {
+    for (const pairData of pair.value.items) {
       configValue = [...configValue, ...deconstruct(pairData, yamlPath)]
     }
   } else if (pair.value.value != undefined) {
@@ -55,13 +54,13 @@ function deconstruct(pair: any, yamlPath: string = ''): any[] {
       key: pair.key?.value || 'NULL',
       value: configValue,
       comment: pair.key?.commentBefore || pair.value.comment || '',
-      path: yamlPath
+      path: yamlPath,
     }
   )
   return configData
 }
 
-function getKarinAssociated(view: any[], file: string): any[] {
+function getKarinAssociated (view: any[], file: string): any[] {
   let associated: any[] = []
   for (const config of view) {
     if (config.type === 'group' && config.part) {
@@ -70,15 +69,15 @@ function getKarinAssociated(view: any[], file: string): any[] {
       for (const item of config.associated) {
         const associatedFile = item.file || file
         const karinConfig = new YamlEditor(path.join('config/config/', associatedFile + '.yaml'))
-        const karinDefaultConfig = new YamlEditor(path.join('config/defSet/', associatedFile + '.yaml'))
+        const karinDefaultConfig = new YamlEditor(path.join(Cfg.pkgCfgDir, associatedFile + '.yaml'))
         associated.push({
           config: config.path,
           target: {
             file: associatedFile,
             path: item.path,
             value: karinConfig.get(item.path) || karinDefaultConfig.get(item.path),
-            expected: item.requirement
-          }
+            expected: item.requirement,
+          },
         })
       }
     }
@@ -86,25 +85,25 @@ function getKarinAssociated(view: any[], file: string): any[] {
   return associated
 }
 
-function deconstructView(view: any[], yaml: YamlEditor) {
-  let viewData: View[] = []
-  for (let config of view) {
+function deconstructView (view: any[], yaml: YamlEditor) {
+  const viewData: View[] = []
+  for (const config of view) {
     let value
 
     if (config.default === undefined || config.default === null) {
       switch (config.type) {
         case 'text':
           config.default = ''
-          break;
+          break
         case 'url':
           config.default = ''
-          break;
+          break
         case 'boolean':
           config.default = false
-          break;
+          break
         default:
           config.default = ''
-          break;
+          break
       }
     }
 
@@ -124,14 +123,13 @@ function deconstructView(view: any[], yaml: YamlEditor) {
       multiple: config.multiple,
       prefix: config.prefix,
       suffix: config.suffix,
-      value: value
+      value,
     })
-
   }
   return viewData
 }
 
-function getKarinView(file: string) {
+function getKarinView (file: string) {
   const configFile = `config/view/${file}.yaml`
   let karinConfigData = {}
   let view
@@ -141,7 +139,7 @@ function getKarinView(file: string) {
     const yamlData = yamlEditor.get('')
     view = yamlData
     const fileYaml = new YamlEditor(`config/config/${file}.yaml`)
-    let viewData = deconstructView(yamlData.view, fileYaml)
+    const viewData = deconstructView(yamlData.view, fileYaml)
     associated = getKarinAssociated(yamlData.view, file)
     karinConfigData = viewData
   }
@@ -153,15 +151,15 @@ function getKarinView(file: string) {
 * @param {string} file 配置文件名
 * @returns {object} 配置信息
 */
-export function getKarinConfig(file: string): { config: any } | { config: any, view: any, associated: any } {
+export function getKarinConfig (file: string): { config: any } | { config: any, view: any, associated: any } {
   if (fs.existsSync(`config/view/${file}.yaml`)) {
     return getKarinView(file)
   }
   const karinConfig = new YamlEditor(path.join('config/config/', file + '.yaml'))
-  const karinDefaultConfig = new YamlEditor(path.join('config/defSet/', file + '.yaml'))
-  let current: any = { ...karinDefaultConfig, ...karinConfig }.document.contents
+  const karinDefaultConfig = new YamlEditor(path.join(Cfg.pkgCfgDir, file + '.yaml'))
+  const current: any = { ...karinDefaultConfig, ...karinConfig }.document.contents
   let configs: any[] = []
-  for (let pair of current.items) {
+  for (const pair of current.items) {
     configs = [...configs, ...deconstruct(pair)]
   }
   return { config: configs }
@@ -174,7 +172,7 @@ export function getKarinConfig(file: string): { config: any } | { config: any, v
 * @param {string | boolean} file 配置值
 * @returns {object|undefined} 变动项
 */
-export function setKarinConfig(file: string, key: string, value: string | boolean) {
+export function setKarinConfig (file: string, key: string, value: string | boolean) {
   const files = getKarinConfigList()
   if (!files.includes(file)) {
     return
@@ -188,21 +186,22 @@ export function setKarinConfig(file: string, key: string, value: string | boolea
       yamlEditor.set(key, value)
       yamlEditor.save()
       return {
-        file, key,
-        value: oleValue, change: value
+        file,
+        key,
+        value: oleValue,
+        change: value,
       }
     } else if (config.Config.append) {
       yamlEditor.set(key, value)
       yamlEditor.save()
       return {
-        file, key,
-        value: null, change: value
+        file,
+        key,
+        value: null,
+        change: value,
       }
-    } else {
-      return
     }
   } catch (error) {
     logger.error(error)
-    return
   }
 }
