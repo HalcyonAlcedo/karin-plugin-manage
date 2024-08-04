@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify/types/instance'
 import { GetAllPluginWidgets, GetPluginWidgets, getPluginsList } from '@plugin/core/config'
-import { dirName } from 'node-karin/lib/types'
+import { dirName } from 'node-karin'
 
 export default async (fastify: FastifyInstance) => {
   // 获取组件
@@ -10,13 +10,13 @@ export default async (fastify: FastifyInstance) => {
     if (plugin && plugins.includes(plugin)) {
       return reply.send({
         status: 'success',
-        data: await GetPluginWidgets(plugin)
+        data: await GetPluginWidgets(plugin),
       })
     } else {
       return reply.send({
         status: 'failed',
         data: [],
-        message: '错误，插件不存在！'
+        message: '错误，插件不存在！',
       })
     }
   })
@@ -24,7 +24,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.post('/GetAllWidgets', async (_request, reply) => {
     return reply.send({
       status: 'success',
-      data: await GetAllPluginWidgets()
+      data: await GetAllPluginWidgets(),
     })
   })
 }

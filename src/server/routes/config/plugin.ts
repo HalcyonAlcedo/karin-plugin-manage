@@ -1,13 +1,13 @@
 import { FastifyInstance } from 'fastify/types/instance'
 import { getPluginConfig, getPluginsList, setPluginConfig, getExamplePluginsList } from '@plugin/core/config'
-import { dirName } from 'node-karin/lib/types'
+import { dirName } from 'node-karin'
 
 export default async (fastify: FastifyInstance) => {
   // 获取插件列表
   fastify.post('/GetPluginList', async (_request, reply) => {
     return reply.send({
       status: 'success',
-      data: getPluginsList()
+      data: getPluginsList(),
     })
   })
 
@@ -15,7 +15,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.post('/GetExamplePluginList', async (_request, reply) => {
     return reply.send({
       status: 'success',
-      data: getExamplePluginsList()
+      data: getExamplePluginsList(),
     })
   })
 
@@ -35,7 +35,7 @@ export default async (fastify: FastifyInstance) => {
       return reply.send({
         status: 'failed',
         data: [],
-        message: '错误，插件不存在！'
+        message: '错误，插件不存在！',
       })
     }
   })
@@ -45,8 +45,8 @@ export default async (fastify: FastifyInstance) => {
     const { plugin, config } = request.body as { plugin: dirName, config: Array<{ file: string, key: string, value: string | boolean }> }
     const plugins = getPluginsList()
     if (plugin && plugins.includes(plugin)) {
-      let changeConfig = []
-      for (let cfg of config) {
+      const changeConfig = []
+      for (const cfg of config) {
         const change = setPluginConfig(plugin, cfg.file, cfg.key, cfg.value)
         if (change && change.value != change.change) {
           changeConfig.push(change)
@@ -54,13 +54,13 @@ export default async (fastify: FastifyInstance) => {
       }
       return reply.send({
         status: 'success',
-        data: changeConfig
+        data: changeConfig,
       })
     } else {
       return reply.send({
         status: 'failed',
         data: [],
-        message: '错误，插件不存在！'
+        message: '错误，插件不存在！',
       })
     }
   })

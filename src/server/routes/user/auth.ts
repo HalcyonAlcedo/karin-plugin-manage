@@ -1,11 +1,11 @@
 import { FastifyInstance } from 'fastify/types/instance'
-import { Bot, segment, Cfg } from 'node-karin'
+import { Bot, segment, Cfg, Scene } from 'node-karin'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import { getBots } from '@plugin/imports'
 import { UserManager } from '@plugin/core/user'
 
-function getOtp() {
+function getOtp () {
   const characters = '0123456789'
   let result = ''
   const charactersLength = characters.length
@@ -90,7 +90,7 @@ export default async (fastify: FastifyInstance) => {
             _qq = Cfg.Config.master.find(master => bcrypt.compareSync(master.toString(), qq.toString()))
           }
           if (_qq && otpBot) {
-            await otpBot.SendMessage({ scene: 'friend', peer: _qq }, [segment.text(`收到快速登陆请求：${authCode}`)])
+            await otpBot.SendMessage({ scene: Scene.Private, peer: _qq }, [segment.text(`收到快速登陆请求：${authCode}`)])
             await UserManager.users.find(u => u.username === _qq)?.permissions.setOtp(authCode)
             return reply.send({ status: 'success' })
           } else {
