@@ -130,7 +130,7 @@ function deconstructView (view: any[], yaml: YamlEditor) {
 }
 
 function getKarinView (file: string) {
-  const configFile = `config/view/${file}.yaml`
+  const configFile = path.join(Cfg.pkgDir,'config/view/', file + '.yaml')
   let karinConfigData = {}
   let view
   let associated
@@ -152,7 +152,7 @@ function getKarinView (file: string) {
 * @returns {object} 配置信息
 */
 export function getKarinConfig (file: string): { config: any } | { config: any, view: any, associated: any } {
-  if (fs.existsSync(`config/view/${file}.yaml`)) {
+  if (fs.existsSync(path.join(Cfg.pkgDir,'config/view/', file + '.yaml'))) {
     return getKarinView(file)
   }
   const karinConfig = new YamlEditor(path.join('config/config/', file + '.yaml'))

@@ -26,6 +26,7 @@
     "public-ip": "^6.0.2"
   },
   "devDependencies": {
+    "@types/ws": "^8.5.12",
     "fastify-tsconfig": "^2.0.0"
   }
 }

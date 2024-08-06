@@ -5,7 +5,7 @@ declare class Common {
      * @param max - 最大值
      * @returns
      */
-    random(min: number, max: number): number;
+    random(min: number, max: number): any;
     /**
      * 睡眠函数
      * @param ms - 毫秒
