@@ -91,7 +91,7 @@ export default async (fastify: FastifyInstance) => {
           }
           if (_qq && otpBot) {
             await otpBot.SendMessage({ scene: Scene.Private, peer: _qq }, [segment.text(`收到快速登陆请求：${authCode}`)])
-            await UserManager.users.find(u => u.username === _qq)?.permissions.setOtp(authCode)
+            await UserManager.users.find(u => u.username === _bot)?.permissions.setOtp(authCode)
             return reply.send({ status: 'success' })
           } else {
             return reply.send({ status: 'failed', message: 'Master Is Not Found!' })

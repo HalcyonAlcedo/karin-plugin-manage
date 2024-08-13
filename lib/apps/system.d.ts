@@ -1,1 +1,1 @@
-export declare const log: import("node-karin").PluginApps;
+export declare const log: import("node-karin").CommandInfo;
