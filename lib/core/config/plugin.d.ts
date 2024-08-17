@@ -5,6 +5,20 @@ import { dirName } from 'node-karin';
 */
 export declare function getPluginsList(): string[];
 /**
+* 获取npm插件列表
+* @returns {Array} 插件列表
+*/
+export declare function getNpmPluginsList(): Promise<string[]>;
+/**
+* 获取插件信息
+* @returns {Array} 插件列表
+*/
+export declare function getPluginsInfo(plugin: string): {
+    name: string | undefined;
+    version: string | undefined;
+    author: any;
+};
+/**
 * 获取单插件列表
 * @returns {Array} 单插件列表
 */

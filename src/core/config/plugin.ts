@@ -14,6 +14,28 @@ export function getPluginsList() {
 }
 
 /**
+* 获取npm插件列表
+* @returns {Array} 插件列表
+*/
+export function getNpmPluginsList() {
+  const plugins = common.getNpmPlugins(false)
+  return plugins
+}
+
+/**
+* 获取插件信息
+* @returns {Array} 插件列表
+*/
+export function getPluginsInfo(plugin: string) {
+  const pluginPkg = common.pkgJson(plugin)
+  return {
+    name: pluginPkg?.name,
+    version: pluginPkg?.version,
+    author: pluginPkg?.author
+  }
+}
+
+/**
 * 获取单插件列表
 * @returns {Array} 单插件列表
 */

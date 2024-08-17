@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify/types/instance'
-import { getPluginConfig, getPluginsList, setPluginConfig, getExamplePluginsList } from '@plugin/core/config'
+import { getPluginConfig, getPluginsList, getNpmPluginsList, setPluginConfig, getExamplePluginsList, getPluginsInfo } from '@plugin/core/config'
 import { dirName } from 'node-karin'
 
 export default async (fastify: FastifyInstance) => {
@@ -8,6 +8,23 @@ export default async (fastify: FastifyInstance) => {
     return reply.send({
       status: 'success',
       data: getPluginsList(),
+    })
+  })
+
+  // 获取npm插件列表
+  fastify.post('/GetNpmPluginList', async (_request, reply) => {
+    return reply.send({
+      status: 'success',
+      data: getNpmPluginsList(),
+    })
+  })
+
+  // 获取插件信息
+  fastify.post('/GetPluginInfo', async (request, reply) => {
+    const { plugin } = request.body as { plugin: string }
+    return reply.send({
+      status: 'success',
+      data: getPluginsInfo(plugin),
     })
   })
 
