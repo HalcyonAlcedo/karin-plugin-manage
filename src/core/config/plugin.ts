@@ -172,6 +172,7 @@ function deconstructView(view: any[], yaml: YamlEditor): any[] {
       type: config.type || 'text',
       item: config.item,
       multiple: config.multiple,
+      cols: config.cols,
       value: value
     })
 

@@ -28,6 +28,7 @@ interface View {
   multiple: boolean
   prefix: string
   suffix: string
+  cols: number
   value: any
 }
 
@@ -123,6 +124,7 @@ function deconstructView (view: any[], yaml: YamlEditor) {
       multiple: config.multiple,
       prefix: config.prefix,
       suffix: config.suffix,
+      cols: config.cols,
       value,
     })
   }

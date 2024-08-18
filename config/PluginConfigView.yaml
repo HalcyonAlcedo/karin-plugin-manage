@@ -14,21 +14,26 @@
       path: 'panelDomain'
       # 配置类型
       type: 'text'
+      # 行宽
+      cols: 12
     -
       key: 群获取日志
       comment: 是否允许在群中获取日志
       path: 'logInGroup'
       type: 'boolean'
+      cols: 4
     -
       key: redis数据库模式
       comment: 是否使用redis数据库
       path: 'redis'
       type: 'boolean'
+      cols: 4
     -
       key: 允许追加数据
       comment: 是否允许在配置不存在时追加数据
       path: 'append'
       type: 'boolean'
+      cols: 4
 -
   name: 面板api服务配置
   file: server.yaml
@@ -38,21 +43,25 @@
       comment: 服务端口
       path: 'port'
       type: 'number'
+      cols: 3
     -
       key: 调试模式
       comment: 调试模式
       path: 'debug'
       type: 'boolean'
+      cols: 3
     -
       key: 远程终端
       comment: 开启远程终端后，在面板可以直接访问服务器终端
       path: 'terminal'
       type: 'boolean'
+      cols: 3
     -
       key: wormhole代理
       comment: 启动wormhole代理
       path: 'wormhole.enable'
       type: 'boolean'
+      cols: 3
     -
       key: wormhole配置
       comment: wormhole代理设置
@@ -66,9 +75,11 @@
           comment: 代理服务器链接地址，例：ws://localhost:3000/ws/
           path: 'wormhole.server'
           type: 'url'
+          cols: 6
         -
           key: 客户端ID
           comment: 客户端id
           path: 'wormhole.clientId'
           type: 'text'
+          cols: 6
 
