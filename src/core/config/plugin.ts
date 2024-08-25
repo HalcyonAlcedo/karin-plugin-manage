@@ -50,7 +50,11 @@ function deconstruct(pair: any, yamlPath: string = ''): any[] {
   if (pair.constructor.name != 'Pair') {
     return [pair.value || pair]
   }
-  yamlPath = pair.key ? `${yamlPath}${yamlPath ? '.' : ''}${pair.key.value}` : ''
+  let newPath = '';
+  if (pair.key) {
+    newPath = yamlPath ? `${yamlPath}.${pair.key.value}` : pair.key.value;
+  }
+  yamlPath = newPath;
   let configData: any[] = []
   let configValue: any[] | string | null | undefined
   if (!pair.value) {
@@ -100,14 +104,30 @@ export function getAllPluginConfig(): any {
   let configs: any = {}
   for (const plugin of plugins) {
     let config_plugin: any = {}
-    const configPath = `plugins/${plugin}/config/config/`
-    if (fs.existsSync(configPath)) {
-      const yamlFiles = fs.readdirSync(configPath).filter(file => file.endsWith('.yaml'))
-      for (const cfg of yamlFiles) {
-        const yamlContent = fs.readFileSync(path.join(configPath, cfg), { encoding: 'utf-8' })
-        config_plugin[path.parse(cfg).name] = Yaml.parse(yamlContent)
-      }
+
+    const configPathCustom = `config/plugin/${plugin}/`
+    const configPathDefault = `plugins/${plugin}/config/config/`
+
+    const customFiles = fs.existsSync(configPathCustom)
+      ? fs.readdirSync(configPathCustom).filter(file => file.endsWith('.yaml'))
+      : []
+
+    const defaultFiles = fs.existsSync(configPathDefault)
+      ? fs.readdirSync(configPathDefault).filter(file => file.endsWith('.yaml'))
+      : []
+
+    // 优先使用config/plugin/${plugin}/目录下的文件
+    const allFiles = new Set([...defaultFiles, ...customFiles])
+
+    for (const file of allFiles) {
+      const filePath = customFiles.includes(file)
+        ? path.join(configPathCustom, file)
+        : path.join(configPathDefault, file)
+
+      const yamlContent = fs.readFileSync(filePath, { encoding: 'utf-8' })
+      config_plugin[path.parse(file).name] = Yaml.parse(yamlContent)
     }
+
     configs[plugin] = config_plugin
   }
   return configs
@@ -211,23 +231,41 @@ export function getPluginConfig(plugin: dirName) {
     return {}
   }
   let configs: any = {}
-  const configPath = `plugins/${plugin}/config/config/`
-  if (fs.existsSync(configPath)) {
-    // 如果有视图配置文件，直接返回视图规定的配置信息
-    if (fs.existsSync(`plugins/${plugin}/config/PluginConfigView.yaml`)) {
-      return getPluginView(plugin)
-    }
-    const yamlFiles = fs.readdirSync(configPath).filter(file => file.endsWith('.yaml'))
-    for (const cfg of yamlFiles) {
-      const yamlContent = new YamlEditor(path.join(configPath, cfg))
-      let current: any = yamlContent.document.contents
-      let pluginCfg: any[] = []
-      for (let pair of current.items) {
-        pluginCfg = [...pluginCfg, ...deconstruct(pair)]
-      }
-      configs[path.parse(cfg).name] = pluginCfg
-    }
+
+  const configPathCustom = `config/plugin/${plugin}/`
+  const configPathDefault = `plugins/${plugin}/config/config/`
+
+  const customFiles = fs.existsSync(configPathCustom)
+    ? fs.readdirSync(configPathCustom).filter(file => file.endsWith('.yaml'))
+    : []
+
+  const defaultFiles = fs.existsSync(configPathDefault)
+    ? fs.readdirSync(configPathDefault).filter(file => file.endsWith('.yaml'))
+    : []
+
+  // 如果有视图配置文件，直接返回视图规定的配置信息
+  const configViewPath = `plugins/${plugin}/config/PluginConfigView.yaml`
+  if (fs.existsSync(configViewPath)) {
+    return getPluginView(plugin)
   }
+
+  // 优先使用config/plugin/${plugin}/目录下的文件
+  const allFiles = new Set([...defaultFiles, ...customFiles])
+
+  for (const file of allFiles) {
+    const filePath = customFiles.includes(file)
+      ? path.join(configPathCustom, file)
+      : path.join(configPathDefault, file)
+
+    const yamlContent = new YamlEditor(filePath)
+    let current: any = yamlContent.document.contents
+    let pluginCfg: any[] = []
+    for (let pair of current.items) {
+      pluginCfg = [...pluginCfg, ...deconstruct(pair)]
+    }
+    configs[path.parse(file).name] = pluginCfg
+  }
+
   return { config: configs }
 }
 
@@ -244,34 +282,39 @@ export function setPluginConfig(plugin: dirName, file: string, key: string, valu
   if (!plugins.includes(plugin)) {
     return
   }
-  const configPath = `plugins/${plugin}/config/config/`
-  if (fs.existsSync(configPath)) {
-    const yamlFile = path.join(configPath, file + '.yaml')
-    try {
-      const yamlEditor = new YamlEditor(yamlFile)
-      logger.info(`设置：${yamlFile}`)
-      if (yamlEditor.has(key)) {
-        const oleValue = yamlEditor.get(key)
-        yamlEditor.set(key, value)
-        yamlEditor.save()
-        return {
-          plugin, file, key,
-          value: oleValue, change: value
-        }
-      } else if (config.Config.append) {
-        yamlEditor.set(key, value)
-        yamlEditor.save()
-        return {
-          plugin, file, key,
-          value: null, change: value
-        }
-      } else {
-        return
+
+  const configPathCustom = `config/plugin/${plugin}/`
+  const configPathDefault = `plugins/${plugin}/config/config/`
+
+  // 优先使用config/plugin/${plugin}/目录下的文件
+  const yamlFile = fs.existsSync(path.join(configPathCustom, file + '.yaml'))
+    ? path.join(configPathCustom, file + '.yaml')
+    : path.join(configPathDefault, file + '.yaml')
+
+  try {
+    const yamlEditor = new YamlEditor(yamlFile)
+    logger.info(`设置：${yamlFile}`)
+    if (yamlEditor.has(key)) {
+      const oleValue = yamlEditor.get(key)
+      yamlEditor.set(key, value)
+      yamlEditor.save()
+      return {
+        plugin, file, key,
+        value: oleValue, change: value
       }
-    } catch (error) {
-      logger.error(`设置${yamlFile}失败`, error)
+    } else if (config.Config.append) {
+      yamlEditor.set(key, value)
+      yamlEditor.save()
+      return {
+        plugin, file, key,
+        value: null, change: value
+      }
+    } else {
       return
     }
+  } catch (error) {
+    logger.error(`设置${yamlFile}失败`, error)
+    return
   }
 }
 
