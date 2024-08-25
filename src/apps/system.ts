@@ -36,7 +36,7 @@ export const log = karin.command(
         props: logs,
         vue: true,
         setViewport: { width: 640 }
-      }) as string
+      })
       return e.reply(segment.image(img)) !== undefined
     } catch (error) {
       logger.error(error)

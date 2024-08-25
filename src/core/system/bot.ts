@@ -1,5 +1,5 @@
 import { getBots } from '@plugin/imports'
-import { Bot, KarinAdapter } from 'node-karin'
+import { karin, KarinAdapter } from 'node-karin'
 
 interface BotList {
   uin: string
@@ -20,7 +20,7 @@ interface BotList {
 export async function getBotList() {
   let list: BotList[] = []
   for (const k in getBots()) {
-    const bot: KarinAdapter | undefined = Bot.getBot(k)
+    const bot: KarinAdapter | undefined = karin.getBot(k)
     if (bot) {
       try {
         const avatar = bot.getAvatarUrl(k) || `https://q1.qlogo.cn/g?b=qq&s=0&nk=${k}`

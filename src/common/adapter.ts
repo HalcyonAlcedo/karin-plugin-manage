@@ -1,4 +1,4 @@
-import { Bot, KarinAdapter } from 'node-karin'
+import { karin, KarinAdapter } from 'node-karin'
 
 interface DynamicObject {
   [key: string]: KarinAdapter
@@ -6,7 +6,7 @@ interface DynamicObject {
 
 export function getBots(): DynamicObject {
   const list: DynamicObject = {}
-  const botList = Bot.getBotAll() as KarinAdapter[]
+  const botList = karin.getBotAll() as KarinAdapter[]
   for (const bot of botList) {
     list[bot.account.uid] = bot
   }

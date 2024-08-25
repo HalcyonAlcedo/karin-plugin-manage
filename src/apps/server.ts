@@ -9,14 +9,14 @@ start()
 
 // 创建面板管理账号
 export const addUser = karin.command(
-  /^#(添加|创建)面板管理账号/,
+  /^#(添加|创建)面板(管理)账号/,
   async (e) => {
     // 判断是否群聊
     if (!e.isPrivate) {
       return e.reply('请私聊发送') !== undefined
     }
     // 获取消息中的密码
-    let password: string = e.msg.replace(/^#(添加|创建)面板管理账号/, '').replace(/[\s\r\n]+/g, '')
+    let password: string = e.msg.replace(/^#(添加|创建)面板(管理)账号/, '').replace(/\s+/g, '')
 
     // 检查账号状态
     if (UserManager.checkUser(e.user_id)) {
@@ -39,14 +39,14 @@ export const addUser = karin.command(
 
 // 修改面板管理账号密码
 export const changePassword = karin.command(
-  /^#(重置|修改)面板管理密码/,
+  /^#(重置|修改)面板(管理)密码/,
   async (e) => {
     // 判断是否群聊
     if (!e.isPrivate) {
       return e.reply('请私聊发送') !== undefined
     }
     // 获取消息中的密码
-    let password:string = e.msg.replace(/^#(重置|修改)面板管理密码/, '').replace(/[\s\r\n]+/g, '')
+    let password:string = e.msg.replace(/^#(重置|修改)面板(管理)密码/, '').replace(/\s+/g, '')
     // 检查账号状态
     if (UserManager.checkUser(e.user_id)) {
       if (password) {
@@ -62,6 +62,7 @@ export const changePassword = karin.command(
   { permission: 'master', priority: -10 }
 )
 
+// 获取面板访问地址
 export const panelAddress = karin.command(
   /^#(访问|登陆)(管理|系统)?(面板|Manage|manage)/,
   async (e) => {
@@ -89,6 +90,7 @@ export const panelAddress = karin.command(
   { permission: 'master', priority: -10 }
 )
 
+// 重启面板服务
 export const restartServer = karin.command(
   /^#重启面板(服务)?/,
   async (e) => {
