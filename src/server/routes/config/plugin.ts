@@ -39,9 +39,9 @@ export default async (fastify: FastifyInstance) => {
   // 获取插件配置
   fastify.post('/GetPluginConfig', async (request, reply) => {
     const { plugin } = request.body as { plugin: dirName }
-    const plugins = getPluginsList()
+    const plugins = [...getPluginsList(), ...await getNpmPluginsList()]
     if (plugin && plugins.includes(plugin)) {
-      const result = getPluginConfig(plugin)
+      const result = await getPluginConfig(plugin)
       return reply.send({
         status: 'success',
         data: result.config,
@@ -60,11 +60,11 @@ export default async (fastify: FastifyInstance) => {
   // 设置插件配置
   fastify.post('/SetPluginConfig', async (request, reply) => {
     const { plugin, config } = request.body as { plugin: dirName, config: Array<{ file: string, key: string, value: string | boolean }> }
-    const plugins = getPluginsList()
+    const plugins = [...getPluginsList(), ...await getNpmPluginsList()]
     if (plugin && plugins.includes(plugin)) {
       const changeConfig = []
       for (const cfg of config) {
-        const change = setPluginConfig(plugin, cfg.file, cfg.key, cfg.value)
+        const change = await setPluginConfig(plugin, cfg.file, cfg.key, cfg.value)
         if (change && change.value != change.change) {
           changeConfig.push(change)
         }

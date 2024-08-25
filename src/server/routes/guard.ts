@@ -21,7 +21,7 @@ async function routeGuard(request: any, reply: any) {
   try {
     const token = request.headers.authorization?.split(' ')[0] || request.headers['sec-websocket-protocol']?.split(' ')[0]
     if (!token) {
-      throw new Error('No authorization token provided')
+      reply.status(401).send({ status: 'error', error: 'No authorization token provided' })
     }
     const SECRET_KEY = UserManager.secretKey
     if (SECRET_KEY) {

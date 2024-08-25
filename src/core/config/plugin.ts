@@ -1,8 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import Yaml from 'yaml'
+import crypto from 'crypto'
 import { YamlEditor, logger, common, dirName } from 'node-karin'
-import { config } from '@plugin/imports'
+import { config as Cfg } from '@plugin/imports'
+import { UserManager } from '@plugin/core/user'
+import axios, { AxiosError } from 'node-karin/axios'
 
 /**
 * 获取插件列表
@@ -17,8 +20,8 @@ export function getPluginsList() {
 * 获取npm插件列表
 * @returns {Array} 插件列表
 */
-export function getNpmPluginsList() {
-  const plugins = common.getNpmPlugins(false)
+export async function getNpmPluginsList() {
+  const plugins = await common.getNpmPlugins(false)
   return plugins
 }
 
@@ -99,8 +102,8 @@ function deconstruct(pair: any, yamlPath: string = ''): any[] {
 * 获取全部插件配置
 * @returns {object} 插件配置信息
 */
-export function getAllPluginConfig(): any {
-  const plugins = getPluginsList()
+export async function getAllPluginConfig(): Promise<any> {
+  const plugins = [...getPluginsList(), ...await getNpmPluginsList()]
   let configs: any = {}
   for (const plugin of plugins) {
     let config_plugin: any = {}
@@ -135,13 +138,20 @@ export function getAllPluginConfig(): any {
 
 function getPluginAssociated(view: any[], plugin: string, file: string) {
   let associated: any[] = []
+
   for (const config of view) {
     if (config.type === 'group' && config.part) {
       associated = [...associated, ...getPluginAssociated(config.part, plugin, file)]
     } else if (config.associated && Array.isArray(config.associated)) {
       for (const item of config.associated) {
         const associatedFile = item.file || file
-        const karinConfig = new YamlEditor(`plugins/${plugin}/config/config/${associatedFile}`)
+
+        // 优先使用 config/plugin/${plugin}/ 目录下的文件
+        const customPath = `config/plugin/${plugin}/${associatedFile}`
+        const defaultPath = `plugins/${plugin}/config/config/${associatedFile}`
+        const finalPath = fs.existsSync(customPath) ? customPath : defaultPath
+
+        const karinConfig = new YamlEditor(finalPath)
         associated.push({
           config: config.path,
           target: {
@@ -154,13 +164,61 @@ function getPluginAssociated(view: any[], plugin: string, file: string) {
       }
     }
   }
+
   return associated
 }
 
-function deconstructView(view: any[], yaml: YamlEditor): any[] {
+
+async function deconstructView(view: any[], yaml: YamlEditor, plugin: string): Promise<any[]> {
   let viewData = []
   for (let config of view) {
     let value
+
+    // view类型获取远程视图，返回值视为group
+    if (config.type === 'view' && config.api) {
+      let remoteView: string
+      let remoteUrl
+      if (/^(https?:\/\/)[^\s/$.?#].[^\s]*$/i.test(config.api)) {
+        remoteUrl = config.api
+      } else {
+        // 使用本地插件导入的接口
+        remoteUrl = `http://127.0.0.1:${Cfg.Server.port}/system/plugins/${plugin}/${config.api}`
+      }
+      try {
+        // 创建临时访问用户
+        const temporaryPasswd = crypto.randomBytes(32).toString().replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+        const md5Passwd = crypto.createHash('md5').update(temporaryPasswd).digest('hex')
+        if (UserManager.checkUser('TemporaryViewRead')) {
+          UserManager.changePassword('TemporaryViewRead', md5Passwd)
+        } else {
+          UserManager.addUser('TemporaryViewRead', temporaryPasswd, ['^/system/plugins/.*$'])
+        }
+        // 登陆到临时用户
+        const temporaryUser = await UserManager.login('TemporaryViewRead', md5Passwd)
+        remoteView = (await axios.get(remoteUrl, { headers: { 'authorization': temporaryUser?.token } })).data
+      } catch (error) {
+        logger.error('远程视图获取失败：', (error as AxiosError).message)
+        continue
+      }
+      try {
+        // 将远程视图转变为Yaml对象 
+        const remoteYamlData = Yaml.parse(remoteView)
+        value = await deconstructView(remoteYamlData, yaml, plugin)
+        viewData.push({
+          key: config.key,
+          comment: config.comment,
+          path: config.path,
+          type: 'group',
+          item: config.item,
+          multiple: config.multiple,
+          cols: config.cols,
+          value: value
+        })
+      } catch (error) {
+        logger.error('远程视图转换失败', error)
+      }
+      continue
+    }
 
     if (config.default === undefined || config.default === null) {
       switch (config.type) {
@@ -180,7 +238,7 @@ function deconstructView(view: any[], yaml: YamlEditor): any[] {
     }
 
     if (config.type === 'group' && config.part) {
-      value = deconstructView(config.part, yaml)
+      value = await deconstructView(config.part, yaml, plugin)
     } else {
       value = yaml.has(config.path) ? yaml.get(config.path) : config.default
     }
@@ -200,7 +258,7 @@ function deconstructView(view: any[], yaml: YamlEditor): any[] {
   return viewData
 }
 
-function getPluginView(plugin: string) {
+async function getPluginView(plugin: string) {
   const configFile = `plugins/${plugin}/config/PluginConfigView.yaml`
   let pluginConfigData: any = {}
   let view
@@ -212,7 +270,7 @@ function getPluginView(plugin: string) {
     for (const config of yamlData) {
       const pluginFileNamePath = path.parse(config.file)
       const fileYaml = new YamlEditor(`plugins/${plugin}/config/config/${config.file}`)
-      let viewData = deconstructView(config.view, fileYaml)
+      let viewData = await deconstructView(config.view, fileYaml, plugin)
       associated = getPluginAssociated(config.view, plugin, config.file)
       pluginConfigData[pluginFileNamePath.name] = viewData
     }
@@ -225,8 +283,8 @@ function getPluginView(plugin: string) {
 * @param {dirName} plugin 插件名
 * @returns {object} 配置信息
 */
-export function getPluginConfig(plugin: dirName) {
-  const plugins = getPluginsList()
+export async function getPluginConfig(plugin: dirName) {
+  const plugins = [...getPluginsList(), ...await getNpmPluginsList()]
   if (!plugins.includes(plugin)) {
     return {}
   }
@@ -246,7 +304,7 @@ export function getPluginConfig(plugin: dirName) {
   // 如果有视图配置文件，直接返回视图规定的配置信息
   const configViewPath = `plugins/${plugin}/config/PluginConfigView.yaml`
   if (fs.existsSync(configViewPath)) {
-    return getPluginView(plugin)
+    return await getPluginView(plugin)
   }
 
   // 优先使用config/plugin/${plugin}/目录下的文件
@@ -277,8 +335,8 @@ export function getPluginConfig(plugin: dirName) {
 * @param {string | boolean} file 配置值
 * @returns {object|undefined} 变动项
 */
-export function setPluginConfig(plugin: dirName, file: string, key: string, value: string | boolean) {
-  const plugins = getPluginsList()
+export async function setPluginConfig(plugin: dirName, file: string, key: string, value: string | boolean) {
+  const plugins = [...getPluginsList(), ...await getNpmPluginsList()]
   if (!plugins.includes(plugin)) {
     return
   }
@@ -302,7 +360,7 @@ export function setPluginConfig(plugin: dirName, file: string, key: string, valu
         plugin, file, key,
         value: oleValue, change: value
       }
-    } else if (config.Config.append) {
+    } else if (Cfg.Config.append) {
       yamlEditor.set(key, value)
       yamlEditor.save()
       return {

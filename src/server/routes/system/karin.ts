@@ -54,7 +54,6 @@ export default async (fastify: FastifyInstance) => {
     const { cmd } = request.body as { cmd: { win: string, linux: string } | string }
     const isWindows = os.platform() === 'win32'
     const runCmd = typeof cmd == 'string' ? cmd : (isWindows ? cmd.win : cmd.linux)
-    console.log(runCmd)
     try {
       const run = await exec(runCmd, true)
       if (run.status === 'ok') {

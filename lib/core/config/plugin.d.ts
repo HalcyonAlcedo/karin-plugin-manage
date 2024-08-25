@@ -27,13 +27,13 @@ export declare function getExamplePluginsList(): string[];
 * 获取全部插件配置
 * @returns {object} 插件配置信息
 */
-export declare function getAllPluginConfig(): any;
+export declare function getAllPluginConfig(): Promise<any>;
 /**
 * 获取插件配置
 * @param {dirName} plugin 插件名
 * @returns {object} 配置信息
 */
-export declare function getPluginConfig(plugin: dirName): {
+export declare function getPluginConfig(plugin: dirName): Promise<{
     config: any;
     view: any;
     associated: any[] | undefined;
@@ -41,7 +41,7 @@ export declare function getPluginConfig(plugin: dirName): {
     config?: undefined;
 } | {
     config: any;
-};
+}>;
 /**
 * 设置插件配置
 * @param {dirName} plugin 插件名
@@ -50,13 +50,13 @@ export declare function getPluginConfig(plugin: dirName): {
 * @param {string | boolean} file 配置值
 * @returns {object|undefined} 变动项
 */
-export declare function setPluginConfig(plugin: dirName, file: string, key: string, value: string | boolean): {
+export declare function setPluginConfig(plugin: dirName, file: string, key: string, value: string | boolean): Promise<{
     plugin: string;
     file: string;
     key: string;
     value: any;
     change: string | boolean;
-} | undefined;
+} | undefined>;
 /**
 * 获取全部插件小组件
 * @returns {Array} 小组件信息
