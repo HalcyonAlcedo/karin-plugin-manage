@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { segment, karin } from 'node-karin'
+import { segment, karin, logger } from 'node-karin'
 import { common, config } from '@plugin/imports'
 import { UserManager } from '@plugin/core/user'
 import { start, restart } from '@plugin/server'
@@ -46,7 +46,7 @@ export const changePassword = karin.command(
       return e.reply('请私聊发送') !== undefined
     }
     // 获取消息中的密码
-    let password:string = e.msg.replace(/^#(重置|修改)面板(管理)密码/, '').replace(/\s+/g, '')
+    let password: string = e.msg.replace(/^#(重置|修改)面板(管理)密码/, '').replace(/\s+/g, '')
     // 检查账号状态
     if (UserManager.checkUser(e.user_id)) {
       if (password) {
@@ -76,15 +76,16 @@ export const panelAddress = karin.command(
     if (config.Server.wormhole?.enable || config.Server.wormhole?.server || config.Server.wormhole?.clientId) {
       const wormholeUrl = new URL(config.Server.wormhole?.server)
       if (wormholeUrl) {
-        msg.push(segment.text(`代理服务器地址：http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${config.Server.wormhole?.clientId}/\n`))
+        msg.push(segment.text(`代理服务器地址：http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${config.Server.wormhole?.clientId}/\n\n`))
       }
     }
     if (config.Config.panelDomain) {
-      msg.push(segment.text(`公网服务器地址：http://${config.Config.panelDomain}:${config.Server.port || 80}\n`))
+      msg.push(segment.text(`公网服务器地址：http://${config.Config.panelDomain}:${config.Server.port || 80}\n\n`))
     } else {
       const publicIp = await common.getPublicIp()
-      msg.push(segment.text(`公网服务器地址：http://${publicIp}:${config.Server.port || 80}\n`))
+      msg.push(segment.text(`公网服务器地址：http://${publicIp}:${config.Server.port || 80}\n\n`))
     }
+    msg.push(segment.text(`内网服务器地址：http://127.0.0.1:${config.Server.port || 80}\n`))
     return e.reply(msg) !== undefined
   },
   { permission: 'master', priority: -10 }
@@ -102,3 +103,76 @@ export const restartServer = karin.command(
   },
   { permission: 'master', priority: -10 }
 )
+
+// 快速访问面板
+// 重启面板服务
+export const quickLoginPanel = karin.command(
+  /^#快速登陆面板/,
+  async (e) => {
+    // 判断是否群聊
+    if (!e.isPrivate) {
+      return e.reply('请私聊发送') !== undefined
+    }
+
+
+    const userExists = UserManager.checkUser('input')
+    const authCode = crypto.randomBytes(32).toString().replace(/[^a-zA-Z0-9]/g, '').slice(0, 6)
+    if (!userExists) {
+      const password = crypto.randomBytes(32).toString().replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)
+      UserManager.addUser('input', password, ['^/user/.*$', '^/config/.*$', '^/system/.*$'])
+    }
+
+    try {
+      await UserManager.users.find(u => u.username === 'input')?.permissions.setOtp(authCode)
+      let msg = []
+      msg.push(segment.text('Karin 管理面板快速登陆\n\n'))
+
+      // 代理服务
+      if (config.Server.wormhole?.enable || config.Server.wormhole?.server || config.Server.wormhole?.clientId) {
+        const wormholeUrl = new URL(config.Server.wormhole?.server)
+        if (wormholeUrl) {
+          const params = encodedParams({
+            server: `http://${wormholeUrl.hostname}:${wormholeUrl.port || 80}/web/${config.Server.wormhole?.clientId}/`,
+            otp: authCode
+          })
+          msg.push(segment.text(`代理服务器地址：http://karin.alcedo.top/auth/login?${params}\n\n`))
+        }
+      }
+      // 公网服务
+      if (config.Config.panelDomain) {
+        const params = encodedParams({
+          server: `http://${config.Config.panelDomain}:${config.Server.port || 80}`,
+          otp: authCode
+        })
+        msg.push(segment.text(`公网服务器地址：http://karin.alcedo.top/auth/login?${params}\n\n`))
+      } else {
+        const publicIp = await common.getPublicIp()
+        const params = encodedParams({
+          server: `http://${publicIp}:${config.Server.port || 80}`,
+          otp: authCode
+        })
+        msg.push(segment.text(`公网服务器地址：http://karin.alcedo.top/auth/login?${params}\n\n`))
+      }
+      // 内网服务
+      const params = encodedParams({
+        server: `http://127.0.0.1:${config.Server.port || 80}`,
+        otp: authCode
+      })
+      msg.push(segment.text(`内网服务器地址：http://karin.alcedo.top/auth/login?${params}\n`))
+
+      return e.reply(msg) !== undefined
+
+    } catch (error) {
+      logger.error(error)
+      return e.reply('发生错误') !== undefined
+    }
+  },
+  { permission: 'master', priority: -10 }
+)
+
+function encodedParams(params: { server: string; otp: string }) {
+  return new URLSearchParams({
+    server: encodeURIComponent(params.server), // 编码网址链接
+    otp: encodeURIComponent(params.otp) // 编码 OTP 字符串
+  }).toString()
+}

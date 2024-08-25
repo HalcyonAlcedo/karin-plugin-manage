@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify/types/instance'
-import { Bot, segment, Cfg, Scene } from 'node-karin'
+import { karin, segment, Cfg, Scene } from 'node-karin'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import { getBots } from '@plugin/imports'
@@ -83,7 +83,7 @@ export default async (fastify: FastifyInstance) => {
 
         const authCode = getOtp()
         try {
-          const otpBot = Bot.getBot(_bot)
+          const otpBot = karin.getBot(_bot)
           // 处理加密master
           let _qq = Cfg.Config.master.find(master => master.toString() === qq.toString())
           if (!_qq) {
