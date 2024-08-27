@@ -6,10 +6,16 @@
 
 karin根目录执行以下命令安装Karin Manage插件
 
-```bash
-git clone https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
-```
+> Github
+> ```bash
+> git clone https://github.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
+> ```
 
+> Gitee
+> ```bash
+> git clone https://gitee.com/HalcyonAlcedo/karin-plugin-manage.git ./plugins/karin-plugin-manage
+> ```
+> 
 安装依赖
 
 ```bash
