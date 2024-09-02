@@ -43,7 +43,7 @@ jobs:
       - name: Remove node-karin from package.json
         run: |
           npm uninstall node-karin --save-dev
-          git add package.json package-lock.json
+          git add package.json
           git commit -m "Remove node-karin from devDependencies" || echo "No changes to commit"
 
       - name: Prepare main branch
