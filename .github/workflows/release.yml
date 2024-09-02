@@ -35,33 +35,21 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
-      - name: Stash lib folder before switching branch
-        run: |
-          git add lib/ -f
-          git stash
-
-      - name: Checkout or create main branch
+      - name: Checkout or create main branch and clear lib folder
         run: |
           git fetch origin
           git checkout main || git checkout -b main
-          git stash pop
+          git rm -rf lib/
+          git commit -m "Clear lib folder before merging dev changes" || echo "No changes to commit"
 
-      - name: Prepare main branch
+      - name: Copy lib folder from dev to main
         run: |
-          # Force add lib folder to bypass .gitignore
-          git add -f lib/
+          git checkout dev -- lib/
           
-          # Remove src folder from main branch if it exists
-          [ -d "src" ] && git rm -rf src/
-           
-          # Remove .github folder from main branch if it exists
-          [ -d ".github" ] && git rm -rf .github/
-
-          # Add other necessary files
-          git add -u
-          
-          # Commit changes
-          git commit -m "Add built files from tag ${{ github.ref_name }}" || echo "No changes to commit"
+      - name: Commit merged changes
+        run: |
+          git add lib/
+          git commit -m "Merge dev lib folder into main"
 
       - name: Push changes to main branch
         env:
