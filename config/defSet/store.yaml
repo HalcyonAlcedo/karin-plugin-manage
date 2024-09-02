@@ -1,0 +1,6 @@
+# 插件商店配置
+
+# 商店地址
+storeList:
+  - https://halcyonalcedo.github.io/karin-store/plugins.json
+  - https://gitee.com/HalcyonAlcedo/karin-store/raw/gh-pages/plugins.json
