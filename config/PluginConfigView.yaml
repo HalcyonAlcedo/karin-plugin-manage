@@ -90,10 +90,10 @@
   # 视图信息
   view:
       -
-      key: 插件列表
-      comment: 插件列表
-      path: 'storeList'
-      type: 'array'
-      arrayType: string
-      # 行宽
-      cols: 12
+        key: 插件列表
+        comment: 插件列表
+        path: 'storeList'
+        type: 'array'
+        arrayType: string
+        # 行宽
+        cols: 12
