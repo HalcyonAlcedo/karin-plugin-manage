@@ -30,6 +30,11 @@ jobs:
       - name: Build the project
         run: npm run build
 
+      - name: Configure Git user information
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          
       - name: Stash lib folder before switching branch
         run: |
           git add lib/ -f
