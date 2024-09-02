@@ -5,7 +5,8 @@ const allowList = [
   /^\/user\/login$/,
   /^\/user\/quickLogin$/,
   /^\/system\/verify$/,
-  /^\/user\/getLoginUserInfo$/
+  /^\/user\/getLoginUserInfo$/,
+  /^\/api\//,
 ]
 
 // 路由守护

@@ -19,6 +19,9 @@ lerna-debug.log*
 /logs/
 /temp/
 
+# 构建
+/lib
+
 # 配置
 /plugins/
 /data/

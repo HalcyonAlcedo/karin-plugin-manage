@@ -64,7 +64,7 @@ export const changePassword = karin.command(
 
 // 获取面板访问地址
 export const panelAddress = karin.command(
-  /^#(访问|登陆)(管理|系统)?(面板|Manage|manage)/,
+  /^#(访问|登陆|登录)(管理|系统)?(面板|Manage|manage)/,
   async (e) => {
     // 判断是否群聊
     if (!e.isPrivate) {
@@ -105,9 +105,8 @@ export const restartServer = karin.command(
 )
 
 // 快速访问面板
-// 重启面板服务
 export const quickLoginPanel = karin.command(
-  /^#快速登陆面板/,
+  /^#快速{登陆|登录}面板/,
   async (e) => {
     // 判断是否群聊
     if (!e.isPrivate) {

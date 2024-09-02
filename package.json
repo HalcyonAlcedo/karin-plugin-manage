@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-manage",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "author": "Alcedo",
   "type": "module",
   "scripts": {
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/ws": "^8.5.12",
-    "fastify-tsconfig": "^2.0.0"
+    "fastify-tsconfig": "^2.0.0",
+    "node-karin": "latest"
   }
 }

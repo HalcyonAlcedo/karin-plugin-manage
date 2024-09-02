@@ -47,10 +47,17 @@ export async function server(options: Options): Promise<FastifyInstance> {
   const plugins = getPluginsList()
   for (const plugin of plugins) {
     const managePath = `plugins/${plugin}/manage/server`
+    const apiPath = `plugins/${plugin}/manage/server`
     if (fs.existsSync(managePath)) {
       await fastify.register(autoLoad, {
         dir: path.resolve(managePath),
         options: { prefix: `system/plugins/${plugin}` }
+      })
+    }
+    if (fs.existsSync(apiPath)) {
+      await fastify.register(autoLoad, {
+        dir: path.resolve(apiPath),
+        options: { prefix: `api/plugins/${plugin}` }
       })
     }
   }
