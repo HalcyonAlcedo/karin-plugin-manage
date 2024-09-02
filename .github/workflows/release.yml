@@ -35,16 +35,16 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
+      - name: Stash lib folder before switching branch
+        run: |
+          git add lib/ -f
+          git stash
+
       - name: Checkout or create main branch
         run: |
           git fetch origin
           git checkout main || git checkout -b main
-
-      - name: Remove node-karin from package.json
-        run: |
-          npm uninstall node-karin --save-dev
-          git add package.json
-          git commit -m "Remove node-karin from devDependencies" || echo "No changes to commit"
+          git stash pop
 
       - name: Prepare main branch
         run: |
