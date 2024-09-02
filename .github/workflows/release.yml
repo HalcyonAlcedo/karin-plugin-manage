@@ -34,7 +34,7 @@ jobs:
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-
+          
       - name: Stash lib folder before switching branch
         run: |
           git add lib/ -f
@@ -44,25 +44,14 @@ jobs:
         run: |
           git fetch origin
           git checkout main || git checkout -b main
+          git rm -rf lib/ || echo "No lib folder to remove"
           git stash pop
 
-      - name: Prepare main branch
+      - name: Commit changes
         run: |
-          # Force add lib folder to bypass .gitignore
           git add -f lib/
+          git commit -m "Update lib folder from dev branch"
           
-          # Remove src folder from main branch if it exists
-          [ -d "src" ] && git rm -rf src/
-           
-          # Remove .github folder from main branch if it exists
-          [ -d ".github" ] && git rm -rf .github/
-
-          # Add other necessary files
-          git add -u
-          
-          # Commit changes
-          git commit -m "Add built files from tag ${{ github.ref_name }}" || echo "No changes to commit"
-
       - name: Push changes to main branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
