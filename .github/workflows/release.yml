@@ -30,24 +30,23 @@ jobs:
       - name: Build the project
         run: npm run build
 
-      - name: Configure Git user information
+      - name: Stash lib folder before switching branch
         run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
+          git add lib/ -f
+          git stash
 
-      - name: Checkout or create main branch and clear lib folder
+      - name: Checkout or create main branch
         run: |
           git fetch origin
           git checkout main || git checkout -b main
           git rm -rf lib/ || echo "No lib folder to remove"
-          git commit -m "Clear lib folder before merging dev changes" || echo "No changes to commit"
-      
-      - name: Copy lib folder from dev to main
+          git stash pop
+
+      - name: Commit changes
         run: |
-          git checkout dev -- lib/
           git add -f lib/
-          git commit -m "Add lib folder from dev to main"
-    
+          git commit -m "Update lib folder from dev branch"
+          
       - name: Push changes to main branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
