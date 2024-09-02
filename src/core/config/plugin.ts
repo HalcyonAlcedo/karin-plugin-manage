@@ -140,6 +140,7 @@ function getPluginAssociated(view: any[], plugin: string, file: string) {
   let associated: any[] = []
 
   for (const config of view) {
+    if (!config) continue
     if (config.type === 'group' && config.part) {
       associated = [...associated, ...getPluginAssociated(config.part, plugin, file)]
     } else if (config.associated && Array.isArray(config.associated)) {
@@ -173,7 +174,7 @@ async function deconstructView(view: any[], yaml: YamlEditor, plugin: string): P
   let viewData = []
   for (let config of view) {
     let value
-
+    if (!config) continue
     // view类型获取远程视图，返回值视为group
     if (config.type === 'view' && config.api) {
       let remoteView: string
