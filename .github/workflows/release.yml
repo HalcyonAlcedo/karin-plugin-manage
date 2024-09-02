@@ -35,10 +35,10 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
 
-      - name: Checkout or create production branch
+      - name: Checkout or create main branch
         run: |
           git fetch origin
-          git checkout production || git checkout -b production
+          git checkout main || git checkout -b main
 
       - name: Remove node-karin from package.json
         run: |
@@ -46,15 +46,15 @@ jobs:
           git add package.json package-lock.json
           git commit -m "Remove node-karin from devDependencies" || echo "No changes to commit"
 
-      - name: Prepare production branch
+      - name: Prepare main branch
         run: |
           # Force add lib folder to bypass .gitignore
           git add -f lib/
           
-          # Remove src folder from production branch if it exists
+          # Remove src folder from main branch if it exists
           [ -d "src" ] && git rm -rf src/
            
-          # Remove .github folder from production branch if it exists
+          # Remove .github folder from main branch if it exists
           [ -d ".github" ] && git rm -rf .github/
 
           # Add other necessary files
@@ -63,7 +63,7 @@ jobs:
           # Commit changes
           git commit -m "Add built files from tag ${{ github.ref_name }}" || echo "No changes to commit"
 
-      - name: Push changes to production branch
+      - name: Push changes to main branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: git push origin production --force
+        run: git push origin main --force
