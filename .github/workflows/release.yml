@@ -39,18 +39,15 @@ jobs:
         run: |
           git fetch origin
           git checkout main || git checkout -b main
-          git rm -rf lib/
+          git rm -rf lib/ || echo "No lib folder to remove"
           git commit -m "Clear lib folder before merging dev changes" || echo "No changes to commit"
-
+      
       - name: Copy lib folder from dev to main
         run: |
           git checkout dev -- lib/
-          
-      - name: Commit merged changes
-        run: |
-          git add lib/
-          git commit -m "Merge dev lib folder into main"
-
+          git add -f lib/
+          git commit -m "Add lib folder from dev to main"
+    
       - name: Push changes to main branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
