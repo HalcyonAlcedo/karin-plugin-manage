@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify/types/instance'
 import Bot from './bot'
 import Karin from './karin'
 import Terminal from './terminal'
+import Store from './store'
 
 export default async (fastify: FastifyInstance) => {
 
@@ -23,4 +24,5 @@ export default async (fastify: FastifyInstance) => {
   Bot(fastify)
   Karin(fastify)
   Terminal(fastify)
+  Store(fastify)
 }
