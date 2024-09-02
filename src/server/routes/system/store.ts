@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify/types/instance'
 import { config } from '@plugin/imports'
 
 export default async (fastify: FastifyInstance) => {
-  // 获取Bot列表
+  // 获取配置文件中的商店列表
   fastify.post('/GetStoreList', async (_request, reply) => {
     try {
       return reply.send({

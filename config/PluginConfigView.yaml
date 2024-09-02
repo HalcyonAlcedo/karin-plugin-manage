@@ -82,4 +82,18 @@
           path: 'wormhole.clientId'
           type: 'text'
           cols: 6
-
+-
+  # 配置文件描述
+  name: 商店配置
+  # 配置文件名
+  file: store.yaml
+  # 视图信息
+  view:
+      -
+      key: 插件列表
+      comment: 插件列表
+      path: 'storeList'
+      type: 'array'
+      arrayType: string
+      # 行宽
+      cols: 12
