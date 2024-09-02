@@ -27,6 +27,9 @@ export declare const config: {
         wormhole: any;
         key: string;
     };
+    readonly Store: {
+        storeList: string[];
+    };
     /**
      * packageon
      * 实时获取packageon文件
